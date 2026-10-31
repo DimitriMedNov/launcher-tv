@@ -7,6 +7,8 @@ y protector de pantalla. Reemplaza a Projectivy.
 
 Proyecto personal. Kotlin + Jetpack Compose for TV.
 
+**¿Quieres instalarla en tu tele?** Sigue la [guía paso a paso](INSTALAR.md) ([English](INSTALL.md)). No necesitas saber programar.
+
 **Estado (30-oct-2026):** la app compila, pasa lint (0 errores) y funciona en el emulador de
 Android TV 12 (navegación, menú, Mover, ocultar, protector y sin internet probados; usa unos 46 MB de RAM).
 Desde el 30-oct-2026 es la pantalla de inicio de la tele de la sala, con fondos propios. La tele del cuarto usa otro diseño, en la rama `cuarto-batman`.
