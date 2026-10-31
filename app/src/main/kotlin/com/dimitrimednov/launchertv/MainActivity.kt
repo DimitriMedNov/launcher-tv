@@ -5,17 +5,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.dimitrimednov.launchertv.ui.home.HomeScreen
-import com.dimitrimednov.launchertv.ui.home.HomeViewModel
+import com.dimitrimednov.launchertv.ui.cuarto.CityApp
+import com.dimitrimednov.launchertv.ui.cuarto.CityViewModel
 
-/** Pantalla de inicio de la tele (responde al botón Home). */
+/** Pantalla de inicio de la tele del cuarto (responde al botón Home). */
 class MainActivity : ComponentActivity() {
-    private val vm: HomeViewModel by viewModels()
+    private val vm: CityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (intent.getBooleanExtra(EXTRA_DEMO, false)) vm.enableDemo()
-        setContent { HomeScreen(vm) }
+        setContent { CityApp(vm) }
     }
 
     override fun onResume() {

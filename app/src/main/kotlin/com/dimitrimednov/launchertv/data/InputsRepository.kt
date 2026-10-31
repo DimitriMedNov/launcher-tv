@@ -77,9 +77,9 @@ class InputsRepository(private val context: Context) {
     private fun read(): List<TvInput> {
         val all = manager?.tvInputList.orEmpty()
         val hdmi = all.filter { it.type == TvInputInfo.TYPE_HDMI && it.parentId == null }
-            .map { info -> info to portOf(info) }
-            .sortedBy { it.second }
-            .map { (info, port) -> toInput(info, port, InputKind.Hdmi) }
+            .sortedBy { hwNumber(it) }
+            .mapIndexed { i, info -> toInput(info, portOf(info) ?: (i + 1), InputKind.Hdmi) }
+            .sortedBy { it.port }
         val antenna = all.firstOrNull { it.type == TvInputInfo.TYPE_TUNER && isHardware(it) }
             ?.let { toInput(it, null, InputKind.Antenna) }
         return hdmi + listOfNotNull(antenna)
@@ -96,13 +96,15 @@ class InputsRepository(private val context: Context) {
         return TvInput(info.id, port, kind, name, state == TvInputManager.INPUT_STATE_CONNECTED)
     }
 
-    /** Los ids de Hisense terminan en `/HW2`…`/HW5` para HDMI 1…4. */
-    private fun portOf(info: TvInputInfo): Int {
-        val label = info.loadLabel(context).toString()
-        return Regex("""\d+""").find(label)?.value?.toIntOrNull()
-            ?: info.id.substringAfterLast("/HW", "").toIntOrNull()?.minus(1)
-            ?: Int.MAX_VALUE
-    }
+    /** Número del puerto si la etiqueta lo trae ("HDMI 2"); si no, se usa el orden de los ids. */
+    private fun portOf(info: TvInputInfo): Int? =
+        Regex("""\d+""").find(info.loadLabel(context).toString())?.value?.toIntOrNull()
+
+    /**
+     * Los ids de Hisense terminan en `/HWn`, en el orden de los puertos: `/HW2`…`/HW5` en la sala
+     * y `/HW4`…`/HW6` en el cuarto.
+     */
+    private fun hwNumber(info: TvInputInfo) = info.id.substringAfterLast("/HW", "").toIntOrNull() ?: Int.MAX_VALUE
 
     /** Los sintonizadores de hardware de Hisense viven en `com.vt.source.tuner`; los de apps (Google TV) no cuentan. */
     private fun isHardware(info: TvInputInfo) = info.id.contains("/HW")

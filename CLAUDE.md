@@ -24,7 +24,8 @@ Pantalla de inicio propia (launcher) para Android TV, estilo Apple TV, para las 
 - Sala: IP local de la tele (ver `adb devices`), Android 12, con antena (Live TV = `com.vt.tv.tvcenter`). Ahí se prueba primero.
 - Cuarto: IP local de la tele, Android 11, solo 1.8 GB de RAM: vigilar el rendimiento del video de fondo.
 - Sala (30-oct-2026): Mi TV ya es la pantalla de inicio. Projectivy está desactivado (`pm disable-user`), no borrado; su servicio de accesibilidad está apagado. Aerial Views desinstalado y protector del sistema apagado (`screensaver_enabled 0`); `screen_off_timeout` subido de 60 s a 20 min para que salga el protector propio.
-- Cuarto: sigue con Projectivy.
+- Cuarto (30-oct-2026): rama `cuarto-batman` con el diseño "La ciudad" (`diseno/Launcher TV Batman/`). Mi TV es la pantalla de inicio y el protector del sistema (`CityDream`); Projectivy desactivado (`pm disable-user`), Aerial Views sigue instalado pero ya no es el protector. Falta activar el servicio de accesibilidad del temporizador y el permiso de notificaciones (comandos en el README). `screen_off_timeout` sigue en 60 s.
+- La rama `main` es la sala y `cuarto-batman` el cuarto: no mezclar sin preguntar.
 
 ## Reglas
 - Español, pasos literales y sin jerga sin explicar.

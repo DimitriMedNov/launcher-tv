@@ -13,7 +13,7 @@ Desde el 30-oct-2026 es la pantalla de inicio de la tele de la sala, con fondos 
 
 Las capturas de esta versión (sala) se están rehaciendo con el fondo nuevo. La comparación
 contra el diseño está en [`docs/auditoria-diseno.md`](docs/auditoria-diseno.md). Las capturas de la
-versión del cuarto están en la rama `cuarto-batman`.
+versión del cuarto están más abajo, en "Tele del cuarto".
 
 ---
 
@@ -215,6 +215,66 @@ adb shell settings put system screen_off_timeout 1200000          # 20 min: deja
 
 ---
 
+## Tele del cuarto: "La ciudad" (rama `cuarto-batman`)
+
+Diseño propio para la tele del cuarto (`diseno/Launcher TV Batman/Launcher Cuarto v6.dc.html`):
+una ciudad de noche donde cada app es un edificio. El edificio enfocado se abre y muestra lo que
+estás viendo o escuchando; a su lado sale la luna. De vez en cuando pasa una tormenta (lluvia,
+relámpagos y murciélagos) que dura unos segundos y se detiene, para que la tele no repinte sin parar.
+
+| Inicio | Menú radial (mantener OK) |
+|---|---|
+| ![Inicio](capturas/cuarto/inicio.jpg) | ![Menú radial](capturas/cuarto/menu-radial.jpg) |
+| **Ajustes** | **Entradas** |
+| ![Ajustes](capturas/cuarto/ajustes.jpg) | ![Entradas](capturas/cuarto/entradas.jpg) |
+| **Información de la app** | **Protector** |
+| ![Información](capturas/cuarto/informacion.jpg) | ![Protector](capturas/cuarto/protector.jpg) |
+
+- **Inicio:** izquierda/derecha recorre los edificios, abajo va a Abrir / Más info, izquierda en el
+  primero abre el menú. Mantener OK abre el menú radial: Abrir (arriba), Mover (derecha),
+  Ocultar (abajo, se confirma manteniendo OK hasta llenar el anillo) e Información (izquierda).
+- **Ajustes:** accesos rápidos, temporizador para dormir (15, 30, 60 y 90 min, con cuenta regresiva
+  arriba a la derecha), modo noche (Automático de 10 p. m. a 7 a. m., Siempre o Nunca; cambia a
+  tonos ámbar con un fundido de 2 s), pronóstico de 5 días como gráfica y apps ocultas.
+- **Entradas:** HDMI 1, 2 y 3 con su señal. Sin antena.
+- **Protector:** sale a los 2 min sin tocar nada dentro del launcher y, como protector del sistema,
+  también encima de cualquier app. La hora cambia de lugar cada minuto con un fundido.
+- **Rendimiento medido en la tele del cuarto (30-oct-2026):** al navegar, 29 de 1,240 cuadros
+  llegaron tarde (2 %); en reposo no se dibuja nada; la app usa unos 87 MB de memoria.
+
+### Instalar en la tele del cuarto
+
+```bash
+export ANDROID_SERIAL=IP-DE-TU-TELE:5555
+adb install -r app/build/outputs/apk/release/launcher-tv-release.apk
+
+# Pantalla de inicio (Projectivy queda desactivado, no borrado)
+adb shell pm disable-user --user 0 com.spocky.projengmenu
+adb shell cmd package set-home-activity com.dimitrimednov.launchertv/.MainActivity
+
+# Protector del sistema: la ciudad (antes era Aerial Views)
+adb shell settings put secure screensaver_components com.dimitrimednov.launchertv/.ui.cuarto.CityDream
+
+# Temporizador para dormir: permiso para apagar la tele (servicio de accesibilidad)
+adb shell settings put secure enabled_accessibility_services com.dimitrimednov.launchertv/com.dimitrimednov.launchertv.data.SleepService
+adb shell settings put secure accessibility_enabled 1
+
+# Para ver qué suena o qué estabas viendo en el panel
+adb shell cmd notification allow_listener com.dimitrimednov.launchertv/com.dimitrimednov.launchertv.data.MediaListenerService
+
+# Volver a como estaba
+adb shell pm enable com.spocky.projengmenu
+adb shell cmd package set-home-activity com.spocky.projengmenu/.ui.home.MainActivity
+adb shell settings put secure screensaver_components com.neilturner.aerialviews/.ui.screensaver.DreamActivity
+adb shell settings put secure enabled_accessibility_services com.spocky.projengmenu/com.spocky.projengmenu.services.ProjectivyAccessibilityService
+```
+
+Una app normal no puede apagar la tele. El temporizador lo hace con un servicio de accesibilidad
+que, al terminar la cuenta, pide a Android "bloquear la pantalla", lo que manda la tele a reposo.
+No lee nada de la pantalla.
+
+---
+
 ## Carpetas
 
 | Carpeta | Contenido |
@@ -233,7 +293,7 @@ adb shell settings put system screen_off_timeout 1200000          # 20 min: deja
 Código bajo licencia [MIT](LICENSE). Las letras incluidas tienen su propia licencia (SIL Open Font License 1.1), en [`licencias/`](licencias/).
 
 ## Créditos
-- **Letra:** [Manrope](https://github.com/googlefonts/manrope), licencia SIL Open Font License 1.1.
+- **Letras:** [Manrope](https://github.com/googlefonts/manrope) (sala) y [Barlow y Barlow Condensed](https://github.com/jpt/barlow) (cuarto), licencia SIL Open Font License 1.1.
 - **Clima:** [Open-Meteo](https://open-meteo.com/), datos CC BY 4.0.
 - **Íconos:** Material Icons (Apache 2.0). Los de clima y entradas se dibujaron a partir del diseño.
 - **Fondo incluido:** un degradado de anochecer hecho para este proyecto (`app/src/main/res/drawable-nodpi/fondo_anochecer.jpg`).

@@ -65,4 +65,9 @@ val HiddenByDefault = setOf(
     "com.vt.tv.mobiledeviceconnectiontips",
     "com.vt.tv.protector",
     "com.vt.tv.singlelisten",
+    // Tele del cuarto: sin antena ni Aerial Views (el fondo es de color).
+    "com.hisense.tv.protector",
+    "com.mediatek.wwtv.tvcenter",
+    "com.neilturner.aerialviews",
+    "com.vt.miracast",
 )

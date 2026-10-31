@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
@@ -36,7 +37,7 @@ private const val DESIGN_HEIGHT = 1080f
  * Así las medidas se copian tal cual del HTML, sin importar la densidad de la tele.
  */
 @Composable
-fun DesignCanvas(content: @Composable () -> Unit) {
+fun DesignCanvas(fontFamily: FontFamily = Manrope, content: @Composable () -> Unit) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize().background(Palette.Bg),
         contentAlignment = Alignment.Center,
@@ -45,7 +46,7 @@ fun DesignCanvas(content: @Composable () -> Unit) {
         CompositionLocalProvider(LocalDensity provides Density(density = scale, fontScale = 1f)) {
             // Estilo base igual al CSS del diseño: sin el interlineado ni la separación de letras
             // que trae tv-material, y con el interlineado centrado como en el navegador.
-            ProvideTextStyle(DesignTextStyle) {
+            ProvideTextStyle(DesignTextStyle.copy(fontFamily = fontFamily)) {
                 Box(Modifier.requiredSize(DESIGN_WIDTH.dp, DESIGN_HEIGHT.dp)) { content() }
             }
         }

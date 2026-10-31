@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc><helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#000}
+a{color:#FFD23F;text-decoration:none}
+a:hover{color:#7FA3C4}
+</style>
+</helmet>
+<div ref="{{ rootRef }}" onClick="{{ focusMe }}" tabIndex="0" style="position:fixed;inset:0;background:#000;overflow:hidden;outline:none;font-family:'Barlow',sans-serif;--bg:#07080A;--sf:#111317;--sf2:#1A1D23;--ln:rgba(255,255,255,0.08);--lnS:rgba(255,255,255,0.16);--tx:#EDEDE8;--mu:#9A9EA6;--mu2:#C4C7CC;--ac:#FFD23F;--ac2:#7FA3C4;--onAc:#0A0A0A;--glow:rgba(255,210,63,0.35);--err:#FF6B5E;--beam:rgba(255,226,140,0.20);--svbg:#030304;--svtx:#E2E2DC">
+  <div style="{{ stageStyle }}">
+    <div style="position:absolute;inset:0;background:var(--bg);transition:background-color 2s ease"></div>
+    <div style="position:absolute;left:192px;right:96px;top:140px;height:1px;background:var(--ln)"></div>
+    <div style="position:absolute;left:192px;top:138px;width:120px;height:4px;background:var(--ac);transition:background-color 2s ease"></div>
+
+    <div style="position:absolute;left:96px;top:160px;width:56px;height:340px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px">
+      <sc-for list="{{ rail }}" as="r" hint-placeholder-count="3">
+        <div style="{{ r.style }}"></div>
+      </sc-for>
+    </div>
+
+    <div style="position:absolute;left:192px;top:54px;height:72px;display:flex;align-items:center;gap:28px">
+      <div data-emblem="header" style="position:relative;width:64px;height:64px;flex:none;border-radius:50%;border:3px solid var(--ac);box-sizing:border-box;overflow:hidden;background:var(--bg);transition:border-color 2s ease,background-color 2s ease">
+        <div style="position:absolute;left:14.08px;top:8.96px;width:32px;height:32px;border-radius:50%;background:var(--ac);transition:background-color 2s ease"></div>
+        <div style="position:absolute;left:23.04px;top:5.12px;width:32px;height:32px;border-radius:50%;background:var(--bg);transition:background-color 2s ease"></div>
+        <div style="position:absolute;left:7.68px;right:7.68px;bottom:0;height:10.24px;background:var(--tx);transition:background-color 2s ease"></div>
+        <div style="position:absolute;left:33.28px;bottom:8.96px;width:7.68px;height:23.04px;background:var(--tx);clip-path:polygon(50% 0,100% 22%,100% 100%,0 100%,0 22%);transition:background-color 2s ease"></div>
+        <div style="position:absolute;left:19.2px;bottom:8.96px;width:8.96px;height:12.8px;background:var(--tx);transition:background-color 2s ease"></div>
+      </div>
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:60px;font-weight:700;line-height:1;text-transform:uppercase;letter-spacing:0.03em;color:var(--tx);transition:color 2s ease">{{ title }}</span>
+      <sc-if value="{{ showOffline }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:16px;height:56px;padding:0 6px 0 18px;border:1px solid var(--err);border-radius:4px">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;text-transform:uppercase;color:var(--err)">Sin conexión</span>
+          <div style="{{ wifiBtn }}">Abrir ajustes de wifi</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ moveHint }}" hint-placeholder-val="{{ false }}">
+        <span style="font-size:26px;color:var(--ac)">Moviendo · flechas para mover · OK confirma · Atrás cancela</span>
+      </sc-if>
+    </div>
+
+    <div style="position:absolute;right:96px;top:54px;height:72px;display:flex;align-items:center;gap:12px">
+      <sc-if value="{{ timerOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px;height:52px;padding:0 18px;border-radius:4px;background:var(--sf);border:1px solid var(--ac);box-sizing:border-box">
+          <span style="font-size:24px;color:var(--mu);white-space:nowrap">Apaga en</span>
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ac);white-space:nowrap">{{ timerLeft }}</span>
+        </div>
+      </sc-if>
+      <div style="display:flex;align-items:center;gap:10px;height:52px;padding:0 18px;border-radius:4px;background:var(--sf);border:1px solid var(--ln);box-sizing:border-box;transition:background-color 2s ease">
+        <span style="width:16px;height:16px;border-radius:50%;border:2px solid var(--ac);box-sizing:border-box;background:linear-gradient(90deg,var(--ac) 50%,transparent 50%)"></span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:600;text-transform:uppercase;color:var(--tx);white-space:nowrap">{{ nightLabel }}</span>
+        <span style="font-size:24px;color:var(--mu);white-space:nowrap">{{ nightModeShort }}</span>
+      </div>
+      <div style="{{ weatherChip }}">
+        <sc-if value="{{ wLoading }}" hint-placeholder-val="{{ false }}">
+          <span style="width:170px;height:24px;border-radius:2px;background:var(--sf2)"></span>
+        </sc-if>
+        <sc-if value="{{ wReady }}" hint-placeholder-val="{{ true }}">
+          <span style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--tx);white-space:nowrap;flex:none">{{ wBig }}</span>
+          <span style="{{ wSmallStyle }}">{{ wSmall }}</span>
+        </sc-if>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:8px;padding-left:14px">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:60px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;color:var(--tx);transition:color 2s ease">{{ clockHM }}</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:600;text-transform:uppercase;color:var(--ac);white-space:nowrap">{{ clockAP }}</span>
+      </div>
+    </div>
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ homeMain }}" hint-placeholder-val="{{ true }}">
+        <div style="{{ tint2 }}">
+          <span style="position:absolute;left:37px;top:48px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.10)"></span>
+            <span style="position:absolute;left:94px;top:31px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.08)"></span>
+            <span style="position:absolute;left:85px;top:99px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,0.09)"></span>
+            <span style="position:absolute;left:48px;top:112px;width:15px;height:15px;border-radius:50%;background:rgba(0,0,0,0.08)"></span>
+        </div>
+        <div style="position:absolute;left:192px;width:1632px;top:160px;display:flex;justify-content:space-between;align-items:baseline;z-index:2">
+          <div style="display:flex;align-items:baseline;gap:14px">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--tx);white-space:nowrap">La ciudad</span>
+            <span style="font-size:24px;color:var(--mu);white-space:nowrap">{{ appsLabel }}</span>
+          </div>
+        </div>
+        <sc-if value="{{ gridLoading }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:192px;top:220px;width:1632px;height:806px;display:flex;align-items:flex-end">
+            <sc-for list="{{ skel16 }}" as="k" hint-placeholder-count="16">
+              <div data-st="1" style="{{ k }}"></div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ gridReady }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:192px;top:220px;width:1640px;height:806px;display:flex;align-items:flex-end;z-index:1">
+            <sc-for list="{{ cards }}" as="c" hint-placeholder-count="16">
+              <div style="{{ c.style }}">
+                <div data-st="1" style="{{ c.inner }}">
+                  <div style="{{ c.beacon }}"></div>
+                  <sc-if value="{{ c.collapsed }}" hint-placeholder-val="{{ true }}">
+                    <div style="background:var(--sf);padding:18px 0;display:flex;justify-content:center;flex:none;transition:background-color 2s ease">
+                      <span style="writing-mode:vertical-rl;transform:rotate(180deg);font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--tx);white-space:nowrap">{{ c.name }}</span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="flex:1;min-height:0;box-sizing:border-box;padding:28px 34px 34px;display:flex;flex-direction:column;gap:14px">
+                      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex:none">
+                        <span style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:600;letter-spacing:0.08em;color:var(--mu);white-space:nowrap">{{ c.num }}</span>
+                        <span style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--mu)">Edificio en foco</span>
+                      </div>
+                      <span style="font-family:'Barlow Condensed',sans-serif;font-size:76px;font-weight:700;line-height:1;text-transform:uppercase;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none">{{ c.name }}</span>
+                      <div style="height:1px;background:var(--lnS);flex:none"></div>
+                      <sc-if value="{{ c.p.isMedia }}" hint-placeholder-val="{{ false }}">
+                        <span style="align-self:flex-start;font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--onAc);background:var(--ac);border-radius:2px;padding:3px 12px;flex:none">{{ c.p.label }}</span>
+                        <span style="font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:700;line-height:1.05;text-transform:uppercase;color:var(--tx);flex:none">{{ c.p.title }}</span>
+                        <span style="font-size:26px;line-height:1.3;color:var(--mu2);flex:none">{{ c.p.sub }}</span>
+                        <div style="display:flex;align-items:baseline;gap:8px;margin-top:8px;flex:none">
+                          <span style="font-family:'Barlow Condensed',sans-serif;font-size:132px;font-weight:700;line-height:0.9;font-variant-numeric:tabular-nums;color:var(--tx)">{{ c.p.big }}</span>
+                          <span style="font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:600;color:var(--ac)">{{ c.p.unit }}</span>
+                          <span style="font-size:24px;color:var(--mu);margin-left:8px">{{ c.p.bigLabel }}</span>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:10px;flex:none">
+                          <div style="height:6px;background:var(--lnS);overflow:hidden">
+                            <div style="{{ c.p.fill }}"></div>
+                          </div>
+                          <span style="font-size:24px;font-variant-numeric:tabular-nums;color:var(--mu2)">{{ c.p.meta }}</span>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ c.p.isNone }}" hint-placeholder-val="{{ false }}">
+                        <span style="align-self:flex-start;font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--tx);border:1px solid var(--lnS);border-radius:2px;padding:2px 12px;flex:none">Sin actividad reciente</span>
+                        <span style="font-size:28px;line-height:1.3;color:var(--mu2);flex:none">Ábrela para empezar a ver o escuchar.</span>
+                        <div style="flex:1;min-height:0;padding:8px 0">
+                          <div style="{{ c.p.block }}"></div>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ c.p.isError }}" hint-placeholder-val="{{ false }}">
+                        <span style="align-self:flex-start;font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--err);border:1px solid var(--err);border-radius:2px;padding:2px 12px;flex:none">Error</span>
+                        <span style="font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:700;line-height:1.05;text-transform:uppercase;color:var(--tx);flex:none">No se pudo cargar lo que estás viendo</span>
+                        <span style="font-size:26px;line-height:1.3;color:var(--mu2);flex:none">{{ c.p.errText }}</span>
+                      </sc-if>
+                      <sc-if value="{{ c.p.isLoading }}" hint-placeholder-val="{{ false }}">
+                        <div style="width:180px;height:32px;border-radius:2px;background:var(--sf2);flex:none"></div>
+                        <div style="width:420px;height:96px;border-radius:2px;background:var(--sf2);flex:none"></div>
+                        <div style="width:300px;height:26px;border-radius:2px;background:var(--sf2);flex:none"></div>
+                        <div style="width:260px;height:120px;border-radius:2px;background:var(--sf2);flex:none"></div>
+                      </sc-if>
+                      <div style="display:flex;gap:16px;margin-top:auto;flex:none">
+                        <sc-for list="{{ c.pb }}" as="b" hint-placeholder-count="2">
+                          <div style="{{ b.style }}">{{ b.label }}</div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="{{ c.glow }}"></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ homeEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:192px;top:136px;width:1632px;height:880px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center">
+          <span data-st="1" style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu)">0 apps visibles</span>
+          <span data-st="1" style="font-size:56px;font-weight:600;color:var(--tx)">No hay apps en el inicio</span>
+          <span data-st="1" style="font-size:28px;color:var(--mu);max-width:900px">La ciudad se quedó a oscuras. Tus apps ocultas esperan en Ajustes.</span>
+          <div data-st="1" style="margin-top:16px">
+            <div style="{{ emptyBtn }}">Mostrar apps ocultas</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ radialOn }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ radialPos }}">
+          <div data-radial="1" style="position:absolute;left:0;top:0;width:0;height:0">
+            <div style="position:absolute;left:-110px;top:-110px;width:220px;height:220px;border-radius:50%;background:var(--sf2);border:1px solid var(--lnS);box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center">
+              <svg width="244" height="244" viewBox="0 0 244 244" style="position:absolute;left:-13px;top:-13px;transform:rotate(-90deg)">
+                <circle cx="122" cy="122" r="116" style="fill:none;stroke:var(--ln);stroke-width:4"></circle>
+                <circle data-ring="1" cx="122" cy="122" r="116" style="fill:none;stroke:var(--ac2);stroke-width:6;stroke-linecap:round;stroke-dasharray:728.8;stroke-dashoffset:728.8"></circle>
+              </svg>
+              <span style="font-size:26px;font-weight:600;color:var(--tx);max-width:190px">{{ radialName }}</span>
+              <span style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu);max-width:190px;line-height:1.15">{{ radialHint }}</span>
+            </div>
+            <sc-for list="{{ radialOpts }}" as="o" hint-placeholder-count="4">
+              <div style="{{ o.style }}">
+                <span style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px">{{ o.arrow }}</span>
+                <span>{{ o.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isInputs }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:192px;top:168px;width:1632px;height:850px;display:flex;flex-direction:column;gap:28px">
+        <span data-st="1" style="font-size:28px;color:var(--mu)">Elige qué ver. El punto lleno indica que hay señal.</span>
+        <sc-if value="{{ inOk }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:32px">
+            <sc-for list="{{ inputs }}" as="h" hint-placeholder-count="3">
+              <div style="{{ h.style }}">
+                <div data-st="1" style="{{ h.inner }}">
+                  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+                    <div style="width:132px;height:60px;border:3px solid var(--tx);border-radius:10px 10px 24px 24px;box-sizing:border-box;display:flex;align-items:center;justify-content:center">
+                      <div style="width:80px;height:14px;border-radius:4px;background:var(--mu)"></div>
+                    </div>
+                    <span style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu)">{{ h.code }}</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <span style="font-size:60px;font-weight:600;color:var(--tx);letter-spacing:-0.01em">{{ h.name }}</span>
+                    <span style="font-size:28px;color:var(--mu)">{{ h.dev }}</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:16px">
+                    <span style="position:relative;width:20px;height:20px;flex:none">
+                      <span data-pulse="{{ h.pulse }}" style="{{ h.ring }}"></span>
+                      <span style="{{ h.dot }}"></span>
+                    </span>
+                    <span style="{{ h.statusStyle }}">{{ h.status }}</span>
+                  </div>
+                  <div data-scan="{{ h.scan }}" style="position:absolute;top:0;bottom:0;left:0;width:120px;opacity:0;background:linear-gradient(90deg,transparent,var(--glow),transparent);pointer-events:none"></div>
+                </div>
+                <div style="{{ h.glow }}"></div>
+              </div>
+            </sc-for>
+          </div>
+          <span style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu)">OK cambia de entrada · Izquierda abre el menú · Atrás vuelve al inicio</span>
+        </sc-if>
+        <sc-if value="{{ inLoading }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:32px">
+            <sc-for list="{{ skel3 }}" as="k" hint-placeholder-count="3">
+              <div data-st="1" style="width:522px;height:440px;border-radius:4px;background:var(--sf);border:1px solid var(--ln);padding:36px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between">
+                <div style="width:132px;height:60px;border-radius:4px;background:var(--sf2)"></div>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div style="width:240px;height:56px;border-radius:8px;background:var(--sf2)"></div>
+                  <div style="width:300px;height:28px;border-radius:4px;background:var(--sf2)"></div>
+                </div>
+                <div style="width:180px;height:26px;border-radius:4px;background:var(--sf2)"></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ inMsg }}" hint-placeholder-val="{{ false }}">
+          <div data-st="1" style="width:1000px;box-sizing:border-box;padding:40px 48px;border-radius:4px;background:var(--sf);border:1px solid var(--ln);display:flex;flex-direction:column;gap:16px">
+            <span style="{{ inMsgTag }}">{{ inMsgLabel }}</span>
+            <span style="font-size:48px;font-weight:600;color:var(--tx)">{{ inMsgTitle }}</span>
+            <span style="font-size:28px;color:var(--mu)">{{ inMsgText }}</span>
+            <div style="display:flex;margin-top:12px">
+              <div style="{{ inMsgBtn }}">{{ inMsgBtnLabel }}</div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:192px;top:164px;width:1000px;display:flex;flex-direction:column">
+        <span data-st="1" style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu);height:32px">ACCESOS RÁPIDOS</span>
+        <div style="display:flex;gap:20px;margin-top:12px">
+          <sc-for list="{{ quick }}" as="q" hint-placeholder-count="4">
+            <div style="{{ q.style }}">
+              <div data-st="1" style="{{ q.inner }}">
+                <span style="font-size:28px;font-weight:600;line-height:1.15;color:var(--tx)">{{ q.name }}</span>
+                <span style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu)">{{ q.sub }}</span>
+                <div data-scan="{{ q.scan }}" style="position:absolute;top:0;bottom:0;left:0;width:70px;opacity:0;background:linear-gradient(90deg,transparent,var(--glow),transparent);pointer-events:none"></div>
+              </div>
+              <div style="{{ q.glow }}"></div>
+            </div>
+          </sc-for>
+        </div>
+
+        <span data-st="1" style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu);height:32px;margin-top:32px">TEMPORIZADOR PARA DORMIR</span>
+        <div data-st="1" style="margin-top:12px;height:240px;box-sizing:border-box;padding:28px;border-radius:4px;background:var(--sf);border:1px solid var(--lnS);display:flex;flex-direction:column;gap:16px;transition:background-color 2s ease,border-color 2s ease">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:32px;font-weight:600;color:var(--tx)">Apagar la tele sola</span>
+              <span style="font-size:24px;color:var(--mu)">{{ timerSub }}</span>
+            </div>
+            <span style="{{ timerBigStyle }}">{{ timerBig }}</span>
+          </div>
+          <div style="height:6px;border-radius:4px;background:var(--ln);overflow:hidden">
+            <div style="{{ timerFill }}"></div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:auto;flex:none">
+            <sc-for list="{{ timerChips }}" as="t" hint-placeholder-count="5">
+              <div style="{{ t.style }}">
+                <sc-if value="{{ t.sel }}" hint-placeholder-val="{{ false }}">
+                  <span style="width:10px;height:10px;border-radius:2px;background:currentColor"></span>
+                </sc-if>
+                <span>{{ t.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <span data-st="1" style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu);height:32px;margin-top:32px">{{ nightHeader }}</span>
+        <div style="display:flex;gap:16px;margin-top:12px">
+          <sc-for list="{{ nightOpts }}" as="o" hint-placeholder-count="3">
+            <div style="{{ o.style }}">
+              <div style="display:flex;align-items:center;gap:12px">
+                <sc-if value="{{ o.sel }}" hint-placeholder-val="{{ false }}">
+                  <span style="width:10px;height:10px;border-radius:2px;background:currentColor"></span>
+                </sc-if>
+                <span style="font-size:28px;font-weight:500">{{ o.label }}</span>
+              </div>
+              <span style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;opacity:0.85">{{ o.sub }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="position:absolute;left:1232px;top:164px;width:592px;display:flex;flex-direction:column">
+        <div data-st="1" style="height:430px;box-sizing:border-box;padding:24px 28px;border-radius:4px;background:var(--sf);border:1px solid var(--ln);display:flex;flex-direction:column;gap:12px;transition:background-color 2s ease,border-color 2s ease">
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:28px;font-weight:600;color:var(--tx);white-space:nowrap">Pronóstico</span>
+            <div style="display:flex;gap:18px;align-items:center;flex:none">
+              <span style="display:flex;align-items:center;gap:8px;font-size:24px;color:var(--tx)"><span style="width:26px;height:3px;background:var(--ac)"></span>Máx</span>
+              <span style="display:flex;align-items:center;gap:8px;font-size:24px;color:var(--tx)"><span style="width:26px;border-top:3px dashed var(--ac2)"></span>Mín</span>
+            </div>
+          </div>
+          <sc-if value="{{ fcOk }}" hint-placeholder-val="{{ true }}">
+            <svg width="536" height="320" viewBox="0 0 536 320" style="overflow:visible">
+              <sc-for list="{{ fc.grid }}" as="g" hint-placeholder-count="3">
+                <line x1="0" x2="536" y1="{{ g.y }}" y2="{{ g.y }}" style="stroke:var(--ln);stroke-width:1"></line>
+              </sc-for>
+              <polyline points="{{ fc.maxPts }}" style="fill:none;stroke:var(--ac);stroke-width:3;stroke-linejoin:round"></polyline>
+              <polyline points="{{ fc.minPts }}" style="fill:none;stroke:var(--ac2);stroke-width:3;stroke-dasharray:8 7;stroke-linejoin:round"></polyline>
+              <sc-for list="{{ fc.pts }}" as="d" hint-placeholder-count="5">
+                <circle cx="{{ d.x }}" cy="{{ d.yMax }}" r="6" style="fill:var(--bg);stroke:var(--ac);stroke-width:3"></circle>
+                <circle cx="{{ d.x }}" cy="{{ d.yMin }}" r="6" style="fill:var(--bg);stroke:var(--ac2);stroke-width:3"></circle>
+                <text x="{{ d.x }}" y="{{ d.tyMax }}" text-anchor="middle" style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:26px;font-weight:500;fill:var(--tx)">{{ d.max }}</text>
+                <text x="{{ d.x }}" y="{{ d.tyMin }}" text-anchor="middle" style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;fill:var(--mu)">{{ d.min }}</text>
+                <text x="{{ d.x }}" y="312" text-anchor="middle" style="font-size:24px;fill:var(--tx)">{{ d.day }}</text>
+              </sc-for>
+            </svg>
+          </sc-if>
+          <sc-if value="{{ fcLoading }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;align-items:flex-end;gap:40px;padding:20px 24px">
+              <sc-for list="{{ skel5 }}" as="k" hint-placeholder-count="5">
+                <div style="flex:1;display:flex;flex-direction:column;gap:12px;align-items:center">
+                  <div style="width:100%;height:150px;border-radius:8px;background:var(--sf2)"></div>
+                  <div style="width:60%;height:24px;border-radius:4px;background:var(--sf2)"></div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ fcErr }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px">
+              <span style="align-self:flex-start;font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--err);border:1px solid var(--err);border-radius:4px;padding:2px 12px">{{ fcErrTag }}</span>
+              <span style="font-size:32px;font-weight:600;color:var(--tx)">{{ fcErrTitle }}</span>
+              <span style="font-size:24px;color:var(--mu)">Lo demás de Ajustes sigue funcionando.</span>
+              <div style="display:flex;margin-top:8px">
+                <div style="{{ fcRetry }}">Reintentar</div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <div data-st="1" style="display:flex;justify-content:space-between;align-items:baseline;margin-top:32px;height:32px">
+          <span style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu)">APPS OCULTAS</span>
+          <span style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu)">{{ hiddenCount }}</span>
+        </div>
+        <sc-if value="{{ hasHidden }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative;margin-top:12px;height:348px;overflow:hidden">
+            <sc-for list="{{ hiddenRows }}" as="h" hint-placeholder-count="0">
+              <div style="{{ h.style }}">
+                <span style="{{ h.swatch }}"></span>
+                <span style="font-size:28px;font-weight:500;color:var(--tx)">{{ h.name }}</span>
+                <div style="{{ h.pill }}">Mostrar</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noHidden }}" hint-placeholder-val="{{ true }}">
+          <div data-st="1" style="margin-top:12px;box-sizing:border-box;padding:24px 28px;border-radius:4px;border:1px dashed var(--lnS);display:flex;flex-direction:column;gap:10px">
+            <span style="font-size:28px;font-weight:600;color:var(--tx)">No hay apps ocultas</span>
+            <span style="font-size:24px;color:var(--mu)">Mantén OK sobre una app del inicio y elige Ocultar.</span>
+            <div style="display:flex;margin-top:8px">
+              <div style="{{ hiddenEmptyBtn }}">Volver al inicio</div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <div data-flash="1" style="position:absolute;left:0;top:0;width:1920px;height:400px;background:linear-gradient(to bottom,#F4F1E6,transparent);opacity:0;pointer-events:none;z-index:60"></div>
+    <div style="position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden;pointer-events:none;z-index:61">
+      <sc-for list="{{ rainDrops }}" as="r" hint-placeholder-count="0">
+        <span data-rain="1" style="{{ r }}"></span>
+      </sc-for>
+      <sc-for list="{{ bats }}" as="bt" hint-placeholder-count="0">
+        <span data-bat="1" style="{{ bt.outer }}">
+          <span data-wing="1" style="{{ bt.inner }}"></span>
+        </span>
+      </sc-for>
+    </div>
+    <div style="{{ sideStyle }}">
+      <span style="font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu);margin-bottom:8px">MENÚ</span>
+      <sc-for list="{{ sideItems }}" as="it" hint-placeholder-count="3">
+        <div style="{{ it.style }}">
+          <span style="font-size:34px;font-weight:600">{{ it.label }}</span>
+          <span style="font-size:24px;color:var(--mu)">{{ it.sub }}</span>
+        </div>
+      </sc-for>
+      <span style="margin-top:auto;font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:24px;color:var(--mu)">Derecha o Atrás para cerrar</span>
+    </div>
+
+    <sc-if value="{{ infoOn }}" hint-placeholder-val="{{ false }}">
+      <div data-radial="1" style="position:absolute;left:460px;top:250px;width:1000px;box-sizing:border-box;padding:48px;border-radius:4px;background:var(--sf2);border:1px solid var(--lnS);display:flex;flex-direction:column;gap:28px;z-index:30">
+        <div style="display:flex;align-items:center;gap:24px">
+          <span style="{{ info.swatch }}"></span>
+          <span style="font-size:56px;font-weight:600;color:var(--tx)">{{ info.name }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;border-top:1px solid var(--ln)">
+          <sc-for list="{{ info.rows }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;justify-content:space-between;gap:24px;padding:16px 0;border-bottom:1px solid var(--ln)">
+              <span style="font-size:26px;color:var(--mu)">{{ r.k }}</span>
+              <span style="font-size:26px;color:var(--tx);text-align:right">{{ r.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:20px">
+          <sc-for list="{{ info.btns }}" as="b" hint-placeholder-count="2">
+            <div style="{{ b.style }}">{{ b.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="{{ toastStyle }}">{{ toastText }}</div>
+
+    <sc-if value="{{ isSaver }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:var(--svbg);z-index:50;overflow:hidden;transition:background-color 2s ease">
+        <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;gap:3px">
+          <div style="width:70px;height:120px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:40px;height:170px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:90px;height:90px;flex:1 1 auto;position:relative;background:var(--sf);transition:background-color 2s ease"><span style="position:absolute;left:30%;top:23px;width:8px;height:11px;background:var(--ac);opacity:0.45"></span><span style="position:absolute;left:62%;top:45px;width:8px;height:11px;background:var(--ac);opacity:0.3"></span></div>
+          <div style="width:50px;height:150px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:30px;height:70px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:80px;height:180px;flex:1 1 auto;position:relative;background:var(--sf);transition:background-color 2s ease"><span style="position:absolute;left:30%;top:45px;width:8px;height:11px;background:var(--ac);opacity:0.45"></span><span style="position:absolute;left:62%;top:90px;width:8px;height:11px;background:var(--ac);opacity:0.3"></span></div>
+          <div style="width:60px;height:110px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:44px;height:140px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:100px;height:80px;flex:1 1 auto;position:relative;background:var(--sf);transition:background-color 2s ease"><span style="position:absolute;left:30%;top:20px;width:8px;height:11px;background:var(--ac);opacity:0.45"></span><span style="position:absolute;left:62%;top:40px;width:8px;height:11px;background:var(--ac);opacity:0.3"></span></div>
+          <div style="width:36px;height:165px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:70px;height:100px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:52px;height:130px;flex:1 1 auto;position:relative;background:var(--sf);transition:background-color 2s ease"><span style="position:absolute;left:30%;top:33px;width:8px;height:11px;background:var(--ac);opacity:0.45"></span><span style="position:absolute;left:62%;top:65px;width:8px;height:11px;background:var(--ac);opacity:0.3"></span></div>
+          <div style="width:28px;height:60px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:84px;height:175px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:46px;height:95px;flex:1 1 auto;position:relative;background:var(--sf);transition:background-color 2s ease"><span style="position:absolute;left:30%;top:24px;width:8px;height:11px;background:var(--ac);opacity:0.45"></span><span style="position:absolute;left:62%;top:48px;width:8px;height:11px;background:var(--ac);opacity:0.3"></span></div>
+          <div style="width:64px;height:150px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:38px;height:120px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:90px;height:85px;flex:1 1 auto;position:relative;background:var(--sf);transition:background-color 2s ease"><span style="position:absolute;left:30%;top:21px;width:8px;height:11px;background:var(--ac);opacity:0.45"></span><span style="position:absolute;left:62%;top:43px;width:8px;height:11px;background:var(--ac);opacity:0.3"></span></div>
+          <div style="width:56px;height:160px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:40px;height:105px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:76px;height:135px;flex:1 1 auto;position:relative;background:var(--sf);transition:background-color 2s ease"><span style="position:absolute;left:30%;top:34px;width:8px;height:11px;background:var(--ac);opacity:0.45"></span><span style="position:absolute;left:62%;top:68px;width:8px;height:11px;background:var(--ac);opacity:0.3"></span></div>
+          <div style="width:30px;height:75px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:66px;height:170px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:48px;height:90px;flex:1 1 auto;position:relative;background:var(--sf);transition:background-color 2s ease"><span style="position:absolute;left:30%;top:23px;width:8px;height:11px;background:var(--ac);opacity:0.45"></span><span style="position:absolute;left:62%;top:45px;width:8px;height:11px;background:var(--ac);opacity:0.3"></span></div>
+          <div style="width:82px;height:125px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:34px;height:150px;flex:1 1 auto;background:var(--sf);transition:background-color 2s ease"></div>
+          <div style="width:60px;height:100px;flex:1 1 auto;position:relative;background:var(--sf);transition:background-color 2s ease"><span style="position:absolute;left:30%;top:25px;width:8px;height:11px;background:var(--ac);opacity:0.45"></span><span style="position:absolute;left:62%;top:50px;width:8px;height:11px;background:var(--ac);opacity:0.3"></span></div>
+        </div>
+        <div style="{{ saverBox }}">
+          <div style="display:flex;align-items:center;gap:44px">
+            <div style="{{ saverMoon }}">
+            <span style="position:absolute;left:46px;top:59px;width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,0.10)"></span>
+            <span style="position:absolute;left:116px;top:38px;width:25px;height:25px;border-radius:50%;background:rgba(0,0,0,0.08)"></span>
+            <span style="position:absolute;left:105px;top:122px;width:55px;height:55px;border-radius:50%;background:rgba(0,0,0,0.09)"></span>
+            <span style="position:absolute;left:59px;top:139px;width:19px;height:19px;border-radius:50%;background:rgba(0,0,0,0.08)"></span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;align-items:baseline;gap:16px">
+                <span style="font-family:'Barlow Condensed',sans-serif;font-size:250px;font-weight:700;line-height:0.85;letter-spacing:-0.01em;font-variant-numeric:tabular-nums;color:var(--svtx)">{{ clockHM }}</span>
+                <span style="font-family:'Barlow Condensed',sans-serif;font-size:64px;font-weight:700;text-transform:uppercase;color:var(--ac);white-space:nowrap">{{ clockAP }}</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:18px;margin-top:28px;padding-top:20px;border-top:1px solid var(--lnS)">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--svtx);white-space:nowrap">{{ dateLong }}</span>
+            <span style="width:8px;height:8px;background:var(--ac);transform:rotate(45deg);flex:none"></span>
+            <span style="font-size:32px;color:var(--svtx);white-space:nowrap">{{ weatherLong }}</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ showLegend }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;justify-content:safe center;gap:14px;white-space:nowrap;overflow:hidden;padding:0 12px;font-family:'Barlow',sans-serif;font-variant-numeric:tabular-nums;font-size:12px;color:#8a96a8;background:#05070b;border-top:1px solid #151b26">
+      <span>←↑→↓</span><span>Enter OK (mantener: menú)</span><span>Esc atrás</span><span>N noche</span><span>E {{ demoLabel }}</span><span>P protector</span><span>M mov. {{ motionLabel }}</span>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;storm&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showLegend&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const APPS = [
+  { id: 'appletv', name: 'Apple TV', color: '#A7A9B4', now: { kind: 'watch', label: 'Seguir viendo', title: 'Órbita Baja', sub: 'T1 · E4 — Ventana de lanzamiento', p: 0.41, left: 'Quedan 31 min' } },
+  { id: 'netflix', name: 'Netflix', color: '#E50914', now: { kind: 'watch', label: 'Seguir viendo', title: 'Cielo Rojo', sub: 'T2 · E5 — La costa', p: 0.62, left: 'Quedan 18 min' } },
+  { id: 'disney', name: 'Disney+', color: '#2453E6', now: { kind: 'watch', label: 'Seguir viendo', title: 'Los Faros', sub: 'Película · 1 h 54 min', p: 0.24, left: 'Quedan 1 h 27 min' } },
+  { id: 'youtube', name: 'YouTube', color: '#FF2D2D', now: { kind: 'watch', label: 'Seguir viendo', title: 'Luz ambiental para tu cuarto', sub: 'Taller Nocturno', p: 0.55, left: 'Quedan 7 min' } },
+  { id: 'prime', name: 'Prime Video', color: '#1BA7E0', now: null },
+  { id: 'spotify', name: 'Spotify', color: '#1DB954', now: { kind: 'music', label: 'Sonando ahora', title: 'Luz de Neón', sub: 'Los Satélites · Mareas', p: 0.43, pos: '1:42', dur: '3:58' } },
+  { id: 'kick', name: 'Kick', color: '#53FC18', now: null },
+  { id: 'claro', name: 'Claro video', color: '#E4002B', now: null },
+  { id: 'dazn', name: 'DAZN', color: '#E8E337', now: null },
+  { id: 'hbo', name: 'HBO Max', color: '#6A3DFF', now: null },
+  { id: 'vix', name: 'ViX', color: '#FF6A13', now: null },
+  { id: 'mercado', name: 'Mercado Play', color: '#FFD93D', now: null },
+  { id: 'fox', name: 'FOX One', color: '#2F6BFF', now: null },
+  { id: 'twitch', name: 'Twitch', color: '#9146FF', now: null },
+  { id: 'play', name: 'Play Store', color: '#34A853', now: null },
+  { id: 'config', name: 'Configuración', color: '#7C8BA3', now: null }
+];
+const INPUTS = [{ n: 1, dev: 'Consola de videojuegos', sig: true }, { n: 2, dev: 'Sin dispositivo', sig: false }, { n: 3, dev: 'Laptop', sig: true }];
+const QUICK = [{ name: 'Wifi', sub: 'Casa_5G' }, { name: 'Imagen', sub: 'Modo cine' }, { name: 'Sonido', sub: 'Bocinas TV' }, { name: 'Ajustes de Android', sub: 'Sistema' }];
+const TIMERS = [0, 15, 30, 60, 90];
+const MODES = [{ id: 'auto', label: 'Automático', sub: '10 p. m.–7 a. m.' }, { id: 'siempre', label: 'Siempre', sub: 'Todo el día' }, { id: 'nunca', label: 'Nunca', sub: 'Solo modo día' }];
+const FC = [{ max: 31, min: 24 }, { max: 32, min: 24 }, { max: 30, min: 23 }, { max: 31, min: 25 }, { max: 29, min: 22 }];
+const DAY = { bg: '#07080A', sf: '#111317', sf2: '#1A1D23', ln: 'rgba(255,255,255,0.08)', lnS: 'rgba(255,255,255,0.16)', tx: '#EDEDE8', mu: '#9A9EA6', mu2: '#C4C7CC', ac: '#FFD23F', ac2: '#7FA3C4', onAc: '#0A0A0A', glow: 'rgba(255,210,63,0.35)', err: '#FF6B5E', beam: 'rgba(255,226,140,0.20)', svbg: '#030304', svtx: '#E2E2DC' };
+const NIGHT = { bg: '#0A0705', sf: '#140F0B', sf2: '#1D1610', ln: 'rgba(255,200,150,0.08)', lnS: 'rgba(255,200,150,0.16)', tx: '#E8D8C2', mu: '#AC9A82', mu2: '#CBB9A1', ac: '#E8A33D', ac2: '#B98466', onAc: '#140B02', glow: 'rgba(232,163,61,0.28)', err: '#F08A70', beam: 'rgba(232,163,61,0.12)', svbg: '#050302', svtx: '#9C8668' };
+const STATES = ['ok', 'loading', 'offline', 'empty', 'error'];
+const STATE_LABEL = { ok: 'Éxito', loading: 'Cargando', offline: 'Sin internet', empty: 'Sin apps visibles', error: 'Error en clima y panel' };
+const SAVER_POS = [{ l: 150, t: 110 }, { l: 760, t: 470 }, { l: 230, t: 500 }, { l: 820, t: 140 }, { l: 470, t: 300 }];
+const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const DAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const DSH = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+const CW = 252, CH = 128, GX = 24, GY = 16;
+const SLAT_W = 66, SLAT_GAP = 6, OPEN_W = 552, SKY_H = 806;
+const QUIPS = { appletv: 'Te quedaste en órbita. Falta poco.', netflix: 'Medio capítulo y la noche apenas empieza.', disney: 'Los faros siguen encendidos, esperándote.', youtube: 'Un video más. Siempre es uno más.', prime: 'Edificio a oscuras. Por ahora.', spotify: 'La ciudad suena mejor con esto.', kick: 'Alguien está en vivo allá afuera.', claro: 'Luces apagadas, cartelera lista.', dazn: 'El partido no se va a ver solo.', hbo: 'Aquí viven las historias pesadas.', vix: 'Novela, risa o ambas. Tú decides.', mercado: 'Algo bueno para cerrar el día.', fox: 'Noticias, deporte y ruido de ciudad.', twitch: 'El chat nunca duerme.', play: 'Nuevos vecinos para la ciudad.', config: 'Aquí se arregla todo lo demás.' };
+const HEIGHTS = [420, 520, 360, 600, 460, 540, 380, 640, 480, 400, 560, 440, 620, 370, 500, 450];
+const MONO = { appletv: 'TV', netflix: 'N', disney: 'D+', youtube: 'YT', prime: 'PV', spotify: 'SP', kick: 'K', claro: 'CV', dazn: 'DZ', hbo: 'HB', vix: 'VX', mercado: 'MP', fox: 'F1', twitch: 'TW', play: 'PS', config: 'CF' };
+function rgb(h) { h = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16)); }
+function mix(a, b, t) { const A = rgb(a), B = rgb(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
+function fmt(d) { let h = d.getHours(); const m = d.getMinutes(); const ap = h < 12 ? 'a. m.' : 'p. m.'; h = h % 12 || 12; return { hm: h + ':' + String(m).padStart(2, '0'), ap }; }
+function mmss(ms) { const t = Math.max(0, Math.ceil(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); }
+const appById = id => APPS.find(a => a.id === id);
+
+class Component extends DCLogic {
+  state = {
+    now: Date.now(), vw: 1280, vh: 800, screen: 'home', prevScreen: 'home', side: false, sideIdx: 0,
+    zone: 'grid', gi: 0, pi: 0, order: APPS.map(a => a.id), hidden: [], radial: null, moving: null, info: null,
+    toastOn: false, toastText: '', demo: 'ok', errPanel: false, errWeather: false, errFc: false, errIn: false,
+    loadPanel: false, loadWeather: false, loadFc: false, loadIn: false,
+    sRow: 0, sCol: 0, ii: 0, timerMin: 0, timerEnd: null, nightMode: 'auto', nightOv: null, rmOv: null,
+    ring: false, saverPos: 0, saverVis: true, saverAt: 0
+  };
+  rootRef = React.createRef();
+  lastPos = {}; lastHid = {}; lastKey = Date.now();
+
+  componentDidMount() {
+    this.fit(); window.addEventListener('resize', this.fit);
+    if (window.ResizeObserver && this.rootRef.current) { this.ro = new ResizeObserver(this.fit); this.ro.observe(this.rootRef.current); }
+    window.addEventListener('keydown', this.kd); window.addEventListener('keyup', this.ku);
+    this.tick = setInterval(this.onTick, 1000);
+    this.applyTheme(); this.afterRender({}); setTimeout(() => this.startStorm(), 300);
+    this.rootRef.current && this.rootRef.current.focus();
+  }
+  componentWillUnmount() {
+    clearInterval(this.tick); this.stopStorm(); window.removeEventListener('resize', this.fit); this.ro && this.ro.disconnect();
+    window.removeEventListener('keydown', this.kd); window.removeEventListener('keyup', this.ku);
+  }
+  componentDidUpdate(pp, ps) { this.applyTheme(); this.afterRender(ps); if (this.storm() !== this._stormOn) this.startStorm(); }
+  storm() { return (this.props.storm ?? true) && !this.rm(); }
+  stopStorm() { clearTimeout(this.flashT); clearTimeout(this.batT); (this.rainAnims || []).forEach(a => a.cancel()); this.rainAnims = null; }
+  startStorm() {
+    const root = this.rootRef.current; this.stopStorm(); this._stormOn = this.storm(); if (!root || !this._stormOn) return;
+    this.rainAnims = [...root.querySelectorAll('[data-rain]')].map((n, i) => n.animate([{ transform: 'rotate(10deg) translate(0,0)', opacity: 0 }, { opacity: 1, offset: 0.1 }, { opacity: 1, offset: 0.85 }, { transform: 'rotate(10deg) translate(0,1300px)', opacity: 0 }], { duration: 900 + (i % 5) * 120, delay: (i * 53) % 900, iterations: Infinity, easing: 'linear' }));
+    const flash = () => {
+      const fl = root.querySelector('[data-flash]'); const dim = this.state.screen === 'saver' ? 0.5 : 1;
+      fl && fl.animate([{ opacity: 0 }, { opacity: 0.32 * dim, offset: 0.08 }, { opacity: 0, offset: 0.2 }, { opacity: 0.18 * dim, offset: 0.3 }, { opacity: 0, offset: 0.5 }, { opacity: 0 }], { duration: 1100, easing: 'linear' });
+      this.flashT = setTimeout(flash, 7000 + Math.random() * 7000);
+    };
+    const bats = () => {
+      root.querySelectorAll('[data-bat]').forEach((n, i) => n.animate([{ transform: 'translate(0,0)' }, { transform: 'translate(-700px,' + (i % 2 ? -40 : 30) + 'px)', offset: 0.33 }, { transform: 'translate(-1400px,' + (i % 2 ? 20 : -35) + 'px)', offset: 0.66 }, { transform: 'translate(-2300px,' + (i % 2 ? -30 : 10) + 'px)' }], { duration: 4200 + (i % 4) * 500, delay: i * 180, easing: 'linear' }));
+      root.querySelectorAll('[data-wing]').forEach((n, i) => n.animate([{ transform: 'scaleY(1)' }, { transform: 'scaleY(0.35)' }, { transform: 'scaleY(1)' }], { duration: 260 + (i % 3) * 40, delay: i * 180, iterations: 18, easing: 'ease-in-out' }));
+      this.batT = setTimeout(bats, 14000 + Math.random() * 8000);
+    };
+    this.flashT = setTimeout(flash, 1200); this.batT = setTimeout(bats, 600);
+  }
+  fit = () => { const el = this.rootRef.current; const w = (el && el.clientWidth) || window.innerWidth, h = (el && el.clientHeight) || window.innerHeight; if (w !== this.state.vw || h !== this.state.vh) this.setState({ vw: w, vh: h }); };
+
+  night() {
+    const s = this.state; if (s.nightOv !== null) return s.nightOv;
+    if (s.nightMode === 'siempre') return true; if (s.nightMode === 'nunca') return false;
+    const h = new Date(s.now).getHours(); return h >= 22 || h < 7;
+  }
+  rm() { return this.state.rmOv ?? (this.props.reducedMotion ?? false); }
+  applyTheme() {
+    const el = this.rootRef.current; if (!el) return; const n = this.night();
+    if (this._themeN === n) return; this._themeN = n;
+    const T = n ? NIGHT : DAY; for (const k in T) el.style.setProperty('--' + k, T[k]);
+  }
+  visible() { const s = this.state; return s.order.filter(id => !s.hidden.includes(id)); }
+  panelItems() { const s = this.state; if (s.demo === 'loading' || s.loadPanel) return []; if (s.errPanel) return ['retry']; return ['open', 'info']; }
+  topItems() { const s = this.state; if (s.screen !== 'home') return []; if (s.demo === 'offline') return ['wifi']; if (s.errWeather && !s.loadWeather) return ['wretry']; return []; }
+  zoneEff() {
+    const s = this.state; if (s.screen !== 'home') return null;
+    if (s.zone === 'top' && this.topItems().length) return 'top';
+    if (s.demo === 'loading') return 'none';
+    if (!this.visible().length) return 'empty';
+    if (s.zone === 'panel' && this.panelItems().length) return 'panel';
+    return 'grid';
+  }
+  fcState() { const s = this.state; if (s.demo === 'loading' || s.loadFc) return 'loading'; if (s.demo === 'offline') return 'offline'; if (s.errFc) return 'error'; return 'ok'; }
+  inState() { const s = this.state; if (s.demo === 'loading' || s.loadIn) return 'loading'; if (s.errIn) return 'error'; if (s.demo === 'empty') return 'empty'; return 'ok'; }
+  sRows() {
+    const s = this.state; const rows = [{ id: 'quick', n: 4 }, { id: 'timer', n: 5 }, { id: 'night', n: 3 }];
+    const f = this.fcState(); if (f === 'error' || f === 'offline') rows.push({ id: 'fc', n: 1, right: true });
+    rows.push({ id: 'hidden', n: Math.max(1, s.hidden.length), v: true, right: true }); return rows;
+  }
+
+  showToast(t) { clearTimeout(this.toastT); this.setState({ toastOn: true, toastText: t }); this.toastT = setTimeout(() => this.setState({ toastOn: false }), 2600); }
+  onTick = () => {
+    const now = Date.now(), s = this.state, up = { now };
+    if (s.timerEnd && now >= s.timerEnd) { up.timerEnd = null; up.timerMin = 0; this.showToast('Se acabó el tiempo. Aquí la tele se apagaría.'); }
+    if (s.screen !== 'saver' && now - this.lastKey > 120000) { up.screen = 'saver'; up.prevScreen = s.screen; up.saverAt = now; up.side = false; up.radial = null; up.info = null; }
+    if (s.screen === 'saver' && now - s.saverAt >= 60000) { up.saverAt = now; this.moveSaver(); }
+    this.setState(up);
+  };
+  moveSaver() { this.setState({ saverVis: false }); setTimeout(() => this.setState(s => ({ saverPos: (s.saverPos + 1) % SAVER_POS.length, saverVis: true })), 900); }
+
+  kd = (e) => {
+    const k = e.key; this.lastKey = Date.now();
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Escape', 'Backspace', ' '].includes(k)) e.preventDefault();
+    const s = this.state;
+    if (s.screen === 'saver') { if (!e.repeat) this.setState({ screen: s.prevScreen || 'home' }); return; }
+    if (k === 'Enter') {
+      if (e.repeat) return;
+      if (s.radial && s.radial.sel === 2) { this.ringPress = true; this.startRing(); return; }
+      this.enterDown = true; this.holdFired = false; clearTimeout(this.holdT);
+      this.holdT = setTimeout(() => { if (this.enterDown) { this.holdFired = true; this.onHold(); } }, 500);
+      return;
+    }
+    if (!e.repeat && !e.metaKey && !e.ctrlKey) {
+      const l = k.toLowerCase();
+      if (l === 'n') return this.toggleNight();
+      if (l === 'e') return this.cycleDemo();
+      if (l === 'p') return this.setState({ screen: 'saver', prevScreen: s.screen, saverAt: Date.now(), saverVis: true, side: false, radial: null, info: null });
+      if (l === 'm') { const v = !this.rm(); this.setState({ rmOv: v }); return this.showToast(v ? 'Movimiento reducido: solo fundidos' : 'Movimiento completo'); }
+    }
+    if (k === 'Escape' || k === 'Backspace') return this.back();
+    const dir = { ArrowUp: 'u', ArrowDown: 'd', ArrowLeft: 'l', ArrowRight: 'r' }[k];
+    if (dir) this.nav(dir);
+  };
+  ku = (e) => {
+    if (e.key !== 'Enter') return;
+    if (this.ringPress) { this.ringPress = false; this.cancelRing(); return; }
+    if (!this.enterDown) return;
+    this.enterDown = false; clearTimeout(this.holdT);
+    if (!this.holdFired) this.ok();
+  };
+  onHold() {
+    const s = this.state;
+    if (s.screen === 'home' && this.zoneEff() === 'grid' && !s.moving && !s.radial && !s.side && !s.info) {
+      const vis = this.visible(); const id = vis[Math.min(s.gi, vis.length - 1)];
+      if (id) this.setState({ radial: { id, sel: 0 } });
+    } else this.ok();
+  }
+  startRing() {
+    this.setState({ ring: true }, () => {
+      const el = this.rootRef.current && this.rootRef.current.querySelector('[data-ring]'); if (!el) return;
+      this.ringAnim = el.animate([{ strokeDashoffset: '728.8' }, { strokeDashoffset: '0' }], { duration: 1100, easing: 'linear', fill: 'forwards' });
+    });
+    clearTimeout(this.ringT);
+    this.ringT = setTimeout(() => { this.ringT = null; this.ringPress = false; this.ringAnim = null; this.hideApp(this.state.radial && this.state.radial.id); }, 1100);
+  }
+  cancelRing() {
+    if (this.ringT) { clearTimeout(this.ringT); this.ringT = null; if (this.ringAnim) this.ringAnim.cancel(); this.ringAnim = null; this.setState({ ring: false }); this.showToast('Mantén OK hasta que el anillo se llene'); }
+  }
+  hideApp(id) {
+    if (!id) return; const a = appById(id); const n = this.visible().length;
+    this.setState(s => ({ hidden: [...s.hidden, id], radial: null, ring: false, gi: Math.max(0, Math.min(s.gi, n - 2)) }));
+    this.showToast(a.name + ' se fue a las sombras · Ajustes › Apps ocultas');
+  }
+  openApp(id) { const a = appById(id); if (a) this.showToast('Abriendo ' + a.name + '. Que empiece la función.'); }
+  toggleNight() { const n = !this.night(); this.setState({ nightOv: n }); this.showToast(n ? 'Modo noche (atajo N)' : 'Modo día (atajo N)'); }
+  cycleDemo() {
+    const s = this.state; const next = STATES[(STATES.indexOf(s.demo) + 1) % STATES.length]; const err = next === 'error';
+    const up = { demo: next, errPanel: err, errWeather: err, errFc: err, errIn: err, loadPanel: false, loadWeather: false, loadFc: false, loadIn: false, zone: 'grid', radial: null, moving: null, info: null };
+    if (next === 'empty') { this.preHidden = [...s.hidden]; up.hidden = [...s.order]; }
+    if (s.demo === 'empty') up.hidden = this.preHidden || [];
+    this.setState(up); this.showToast('Estado: ' + STATE_LABEL[next]);
+    clearTimeout(this.loadT); if (next === 'loading') this.loadT = setTimeout(() => { if (this.state.demo === 'loading') { this.setState({ demo: 'ok' }); this.showToast('Listo: todo cargado'); } }, 2500);
+  }
+  retry(kind) {
+    const L = { panel: 'loadPanel', weather: 'loadWeather', fc: 'loadFc', in: 'loadIn' }[kind];
+    const E = { panel: 'errPanel', weather: 'errWeather', fc: 'errFc', in: 'errIn' }[kind];
+    this.setState({ [L]: true });
+    setTimeout(() => {
+      if (kind === 'fc' && this.state.demo === 'offline') { this.setState({ [L]: false }); return this.showToast('Sigue sin conexión'); }
+      this.setState({ [L]: false, [E]: false });
+      if (kind === 'weather') this.setState({ zone: 'panel' });
+    }, 1200);
+  }
+  go(screen, extra) { this.setState(Object.assign({ screen, side: false, zone: 'grid', radial: null, info: null }, extra || {})); }
+  openSide() { this.setState({ side: true, sideIdx: ['home', 'inputs', 'settings'].indexOf(this.state.screen) }); }
+
+  ok() {
+    const s = this.state; const vis = this.visible();
+    if (s.info) { if (s.info.btn === 0) this.openApp(s.info.id); return this.setState({ info: null }); }
+    if (s.side) return this.go(['home', 'inputs', 'settings'][s.sideIdx]);
+    if (s.screen === 'home') {
+      if (s.moving) { this.setState({ moving: null }); return this.showToast('Nuevo orden guardado'); }
+      if (s.radial) {
+        const { id, sel } = s.radial;
+        if (sel === 0) { this.setState({ radial: null }); return this.openApp(id); }
+        if (sel === 1) return this.setState({ radial: null, moving: { snap: [...s.order] } });
+        if (sel === 3) return this.setState({ radial: null, info: { id, btn: 0 } });
+        return;
+      }
+      const z = this.zoneEff();
+      if (z === 'grid') return this.openApp(vis[Math.min(s.gi, vis.length - 1)]);
+      if (z === 'panel') {
+        const it = this.panelItems()[s.pi]; const id = vis[Math.min(s.gi, vis.length - 1)];
+        if (it === 'open') return this.openApp(id);
+        if (it === 'info') return this.setState({ info: { id, btn: 0 } });
+        if (it === 'retry') return this.retry('panel');
+      }
+      if (z === 'top') {
+        const it = this.topItems()[0];
+        if (it === 'wifi') { this.go('settings', { sRow: 0, sCol: 0 }); return this.showToast('Abriendo ajustes de wifi'); }
+        if (it === 'wretry') return this.retry('weather');
+      }
+      if (z === 'empty') { const r = this.sRows().findIndex(x => x.id === 'hidden'); return this.go('settings', { sRow: r, sCol: 0 }); }
+      return;
+    }
+    if (s.screen === 'inputs') {
+      const st = this.inState();
+      if (st === 'ok') { const h = INPUTS[s.ii]; return this.showToast(h.sig ? 'Cambiando a HDMI ' + h.n + '…' : 'HDMI ' + h.n + ' no tiene señal'); }
+      if (st === 'error') return this.retry('in');
+      if (st === 'empty') return this.go('home');
+      return;
+    }
+    if (s.screen === 'settings') {
+      const rows = this.sRows(); const r = Math.min(s.sRow, rows.length - 1); const row = rows[r]; const c = Math.min(s.sCol, row.n - 1);
+      if (row.id === 'quick') return this.showToast('Abriendo ' + QUICK[c].name + '…');
+      if (row.id === 'timer') { const m = TIMERS[c]; this.setState({ timerMin: m, timerEnd: m ? Date.now() + m * 60000 : null }); return this.showToast(m ? 'La tele se apagará en ' + m + ' min. Dulces sueños.' : 'Temporizador apagado. Tú mandas.'); }
+      if (row.id === 'night') { const m = MODES[c]; this.setState({ nightMode: m.id, nightOv: null }); return this.showToast('Modo noche: ' + m.label); }
+      if (row.id === 'fc') return this.retry('fc');
+      if (row.id === 'hidden') {
+        if (!s.hidden.length) return this.go('home');
+        const id = s.hidden[c]; const nh = s.hidden.filter(x => x !== id);
+        this.setState({ hidden: nh, sCol: Math.max(0, Math.min(c, nh.length - 1)) });
+        return this.showToast(appById(id).name + ' vuelve a la ciudad');
+      }
+    }
+  }
+  back() {
+    const s = this.state;
+    if (s.info) return this.setState({ info: null });
+    if (s.radial) return this.setState({ radial: null });
+    if (s.moving) { const id = this.visible()[s.gi]; const snapVis = s.moving.snap.filter(x => !s.hidden.includes(x)); this.setState({ order: s.moving.snap, moving: null, gi: Math.max(0, snapVis.indexOf(id)) }); return this.showToast('Movimiento cancelado'); }
+    if (s.side) return this.setState({ side: false });
+    if (s.screen !== 'home') return this.go('home');
+    if (s.zone !== 'grid') return this.setState({ zone: 'grid' });
+  }
+  nav(dir) {
+    const s = this.state;
+    if (s.info) { if (dir === 'l' || dir === 'r') this.setState({ info: Object.assign({}, s.info, { btn: dir === 'l' ? 0 : 1 }) }); return; }
+    if (s.radial) { if (!this.ringT) this.setState({ radial: Object.assign({}, s.radial, { sel: { u: 0, r: 1, d: 2, l: 3 }[dir] }) }); return; }
+    if (s.side) {
+      if (dir === 'u') this.setState({ sideIdx: Math.max(0, s.sideIdx - 1) });
+      if (dir === 'd') this.setState({ sideIdx: Math.min(2, s.sideIdx + 1) });
+      if (dir === 'r') this.setState({ side: false });
+      return;
+    }
+    if (s.screen === 'home') return this.navHome(dir);
+    if (s.screen === 'inputs') {
+      if (this.inState() !== 'ok') { if (dir === 'l') this.openSide(); return; }
+      if (dir === 'l') return s.ii > 0 ? this.setState({ ii: s.ii - 1 }) : this.openSide();
+      if (dir === 'r' && s.ii < 2) this.setState({ ii: s.ii + 1 });
+      return;
+    }
+    if (s.screen === 'settings') return this.navSettings(dir);
+  }
+  navHome(dir) {
+    const s = this.state, vis = this.visible(), n = vis.length, z = this.zoneEff();
+    if (s.moving) {
+      const gi = Math.min(s.gi, n - 1); const t = gi + ({ l: -1, r: 1 }[dir] || 0);
+      if (t === gi || t < 0 || t >= n) return;
+      const nv = [...vis]; const [id] = nv.splice(gi, 1); nv.splice(t, 0, id);
+      return this.setState({ order: nv.concat(s.order.filter(x => s.hidden.includes(x))), gi: t });
+    }
+    if (z === 'grid') {
+      const gi = Math.min(s.gi, n - 1);
+      if (dir === 'l') return gi > 0 ? this.setState({ gi: gi - 1 }) : this.openSide();
+      if (dir === 'r') { if (gi < n - 1) this.setState({ gi: gi + 1 }); return; }
+      if (dir === 'd') { if (this.panelItems().length) this.setState({ zone: 'panel', pi: 0 }); return; }
+      if (dir === 'u') { if (this.topItems().length) this.setState({ zone: 'top' }); return; }
+    }
+    if (z === 'panel') {
+      const L = this.panelItems().length;
+      if (dir === 'l') return s.pi > 0 ? this.setState({ pi: s.pi - 1 }) : this.setState({ zone: 'grid' });
+      if (dir === 'r') { if (s.pi < L - 1) this.setState({ pi: s.pi + 1 }); return; }
+      if (dir === 'u') return this.setState({ zone: 'grid' });
+      return;
+    }
+    if (z === 'top') { if (dir === 'd') return this.setState({ zone: 'grid' }); if (dir === 'l') return this.openSide(); return; }
+    if (z === 'empty' || z === 'none') { if (dir === 'l') return this.openSide(); if (dir === 'u' && this.topItems().length) return this.setState({ zone: 'top' }); }
+  }
+  navSettings(dir) {
+    const s = this.state, rows = this.sRows(); const r = Math.min(s.sRow, rows.length - 1); const row = rows[r]; const c = Math.min(s.sCol, row.n - 1);
+    const idx = id => rows.findIndex(x => x.id === id); const firstRight = rows.findIndex(x => x.right);
+    if (row.v) {
+      if (dir === 'u') return c > 0 ? this.setState({ sCol: c - 1 }) : this.setState({ sRow: r - 1, sCol: rows[r - 1].right ? 0 : rows[r - 1].n - 1 });
+      if (dir === 'd') { if (c < row.n - 1) this.setState({ sCol: c + 1 }); return; }
+      if (dir === 'l') return this.setState({ sRow: idx('night'), sCol: 2 });
+      return;
+    }
+    if (row.right) {
+      if (dir === 'd') return this.setState({ sRow: r + 1, sCol: 0 });
+      if (dir === 'l') return this.setState({ sRow: idx('quick'), sCol: 3 });
+      return;
+    }
+    if (dir === 'l') return c > 0 ? this.setState({ sCol: c - 1 }) : this.openSide();
+    if (dir === 'r') return c < row.n - 1 ? this.setState({ sCol: c + 1 }) : this.setState({ sRow: firstRight, sCol: 0 });
+    if (dir === 'u' && r > 0) return this.setState({ sRow: r - 1, sCol: Math.min(c, rows[r - 1].n - 1) });
+    if (dir === 'd') { const nr = rows[r + 1]; return this.setState({ sRow: r + 1, sCol: nr.right ? 0 : Math.min(c, nr.n - 1) }); }
+  }
+
+  afterRender(ps) {
+    const root = this.rootRef.current; if (!root) return; const rm = this.rm(); const s = this.state;
+    if (this.focusKey !== this._lastFk) {
+      this._lastFk = this.focusKey;
+      if (false) {
+        const el = root.querySelector('[data-scan="' + this.focusKey + '"]');
+        if (el && el.animate) { const w = el.parentElement.offsetWidth; el.animate([{ transform: 'translateX(-100px)', opacity: 0 }, { opacity: 1, offset: 0.15 }, { transform: 'translateX(' + (w + 20) + 'px)', opacity: 0 }], { duration: 700, easing: EASE }); }
+      }
+    }
+    const sk = s.screen + '|' + s.demo + '|' + (this.visible().length ? 1 : 0);
+    if (sk !== this._lastSk) {
+      this._lastSk = sk;
+      [...root.querySelectorAll('[data-st]')].slice(0, 30).forEach((n, i) => n.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], { duration: rm ? 240 : 280, delay: Math.min(i, 14) * 30, easing: EASE, fill: 'backwards' }));
+      if (s.screen === 'inputs') root.querySelectorAll('[data-pulse="1"]').forEach(n => n.animate(rm ? [{ opacity: 0.9 }, { opacity: 0 }] : [{ opacity: 0.9, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(2.6)' }], { duration: 900, iterations: 3, delay: 350, easing: 'ease-out' }));
+    }
+    if ((s.radial && !ps.radial) || (s.info && !ps.info)) {
+      const r = root.querySelector('[data-radial]');
+      r && r.animate(rm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: 'scale(0.88)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 220, easing: EASE });
+    }
+  }
+
+  renderVals() {
+    const s = this.state, rm = this.rm(), night = this.night();
+    if (night !== this._lastNight) { if (this._lastNight !== undefined) this._fadeUntil = Date.now() + 2100; this._lastNight = night; }
+    const nf = Date.now() < (this._fadeUntil || 0);
+    const CT = nf ? 'color 2s ease, background-color 2s ease, border-color 2s ease' : 'color 180ms ease, background-color 180ms ease, border-color 180ms ease';
+    const T = night ? NIGHT : DAY;
+    const vis = this.visible(), n = vis.length, gi = Math.min(s.gi, Math.max(0, n - 1));
+    const z = this.zoneEff();
+    const base = !s.side && !s.radial && !s.info && s.screen !== 'saver';
+    const d = new Date(s.now), tm = fmt(d);
+    const tf = rm ? '' : 'transform 240ms ' + EASE + ', ';
+
+    const btn = (f, extra) => Object.assign({ height: 64, padding: '0 34px', borderRadius: 4, fontFamily: "'Barlow Condensed',sans-serif", textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, fontSize: 26, fontWeight: 500, whiteSpace: 'nowrap', boxSizing: 'border-box', border: '1px solid ' + (f ? 'var(--ac)' : 'var(--lnS)'), background: f ? 'var(--ac)' : 'var(--sf2)', color: f ? 'var(--onAc)' : 'var(--tx)', boxShadow: f ? '5px 5px 0 #000, 0 0 26px var(--glow)' : 'none', transform: f ? 'scale(1.06) rotate(-1deg)' : 'scale(1)', transition: tf + CT }, extra || {});
+    const glow = (f, r, col) => ({ position: 'absolute', inset: -5, borderRadius: r + 3, border: '3px solid ' + (col || 'var(--ac)'), boxShadow: '0 0 26px var(--glow)', opacity: f ? 1 : 0, transition: 'opacity 200ms ease', pointerEvents: 'none' });
+    const sw = (c, size) => ({ width: size, height: size, borderRadius: Math.round(size / 4.5), background: c, flex: 'none' });
+
+    // stage
+    const H = s.vh - (this.props.showLegend ?? true ? 44 : 0); const sc = Math.max(0.05, Math.min(s.vw / 1920, H / 1080));
+    const stageStyle = { position: 'absolute', left: (s.vw - 1920 * sc) / 2, top: (H - 1080 * sc) / 2, width: 1920, height: 1080, transform: 'scale(' + sc + ')', transformOrigin: '0 0', overflow: 'hidden' };
+
+    // focus key for scan line
+    let fk = null;
+    if (base && s.screen === 'home' && z === 'grid' && n) fk = 'c-' + vis[gi];
+    if (base && s.screen === 'inputs' && this.inState() === 'ok') fk = 'h-' + s.ii;
+    const rows = this.sRows(); const sr = Math.min(s.sRow, rows.length - 1); const srow = rows[sr]; const scol = Math.min(s.sCol, srow.n - 1);
+    const sf = base && s.screen === 'settings';
+    if (sf && srow.id === 'quick') fk = 'q-' + scol;
+    this.focusKey = fk;
+
+    // background tint
+    const pa = appById(vis[gi]) || null;
+    const tintC = s.screen === 'home' && pa ? mix(T.bg, night ? mix(pa.color, '#F2A541', 0.6) : pa.color, night ? 0.07 : 0.13) : mix(T.bg, T.ac, 0.05);
+    const ac0 = pa ? pa.color : T.ac; const tint1 = { position: 'absolute', inset: 0, background: mix(T.sf, night ? mix(ac0, '#E8A33D', 0.6) : ac0, night ? 0.05 : 0.09), transition: 'background-color ' + (nf ? '2s' : '500ms') + ' ease' };
+    const oL = 192 + gi * (SLAT_W + SLAT_GAP), oR = oL + OPEN_W; const mx = oR + 40 + 170 <= 1824 ? oR + 40 : oL - 40 - 170; const tint2 = { position: 'absolute', left: 0, top: 206, width: 170, height: 170, borderRadius: '50%', zIndex: 0, overflow: 'hidden', background: night ? '#BFA982' : '#E8E3D3', boxShadow: night ? '0 0 50px rgba(232,163,61,0.18)' : '0 0 60px rgba(240,236,220,0.28)', transform: 'translateX(' + mx + 'px)', transition: (rm ? '' : 'transform 420ms ' + EASE + ', ') + 'background-color 2s ease' };
+
+    const scrIdx = ['home', 'inputs', 'settings'].indexOf(s.screen === 'saver' ? s.prevScreen : s.screen);
+    const rail = ['In', 'En', 'Aj'].map((l, i) => ({ label: '', style: { width: 10, height: i === scrIdx ? 32 : 10, borderRadius: 5, background: i === scrIdx ? 'var(--ac)' : 'var(--lnS)', transition: (rm ? '' : 'height 240ms ' + EASE + ', ') + CT } }));
+
+    // weather
+    const wMode = (s.demo === 'loading' || s.loadWeather) ? 'loading' : s.demo === 'offline' ? 'offline' : s.errWeather ? 'error' : 'ok';
+    const wf = base && z === 'top' && this.topItems()[0] === 'wretry';
+    const weatherChip = { display: 'flex', alignItems: 'center', gap: 10, height: 52, padding: '0 20px', boxSizing: 'border-box', borderRadius: 4, border: '1px solid ' + (wf ? 'var(--ac)' : wMode === 'error' ? 'var(--err)' : 'var(--ln)'), background: wf ? 'var(--sf2)' : 'var(--sf)', boxShadow: wf ? '0 0 24px var(--glow)' : 'none', transform: wf ? 'scale(1.06)' : 'none', transition: tf + CT };
+    const wTxt = { ok: ['29 °C', 'Nublado'], offline: ['-- °C', 'Sin datos'], error: ['Error', wf ? 'OK: reintentar' : 'Reintentar ↑'], loading: ['', ''] }[wMode];
+
+    // panel
+    const pm = (s.demo === 'loading' || s.loadPanel) ? 'loading' : s.errPanel ? 'error' : pa && pa.now ? 'media' : 'none';
+    const pn = pa && pa.now;
+    const p = {
+      isMedia: pm === 'media', isNone: pm === 'none', isError: pm === 'error', isLoading: pm === 'loading',
+      band: { width: 8, flex: 'none', background: pa ? (night ? mix(pa.color, '#000000', 0.35) : pa.color) : 'var(--sf2)', transition: 'background-color 400ms ease' },
+      app: pa ? pa.name : '', label: pn ? pn.label : '', title: pn ? pn.title : '', sub: pn ? pn.sub : '',
+      fill: { height: '100%', width: (pn ? pn.p * 100 : 0) + '%', background: 'var(--ac)', borderRadius: 4, transition: rm ? 'none' : 'width 300ms ' + EASE },
+      meta: pn ? (pn.kind === 'music' ? pn.pos + ' / ' + pn.dur : pn.left) : '',
+      big: pn ? (pn.kind === 'music' ? pn.pos : String(Math.round(pn.p * 100))) : '', unit: pn && pn.kind === 'watch' ? '%' : '',
+      bigLabel: pn ? (pn.kind === 'music' ? 'de ' + pn.dur : 'del episodio') : '',
+      segs: Array.from({ length: 20 }, (_, i) => ({ width: 36, height: 10, borderRadius: 1, background: pn && i < Math.round(pn.p * 20) ? 'var(--ac2)' : 'var(--ln)', transition: 'background-color 300ms ease' })),
+      arc: { fill: 'none', stroke: 'var(--ac2)', strokeWidth: 10, strokeDasharray: 766.5, strokeDashoffset: 766.5 * (1 - (pn ? pn.p : 0)), transition: rm ? 'none' : 'stroke-dashoffset 500ms ' + EASE },
+      block: { width: '100%', height: '100%', boxSizing: 'border-box', border: '1px solid var(--ln)', backgroundColor: pa ? mix(T.sf, night ? mix(pa.color, '#E8A33D', 0.6) : pa.color, night ? 0.08 : 0.12) : T.sf2, backgroundImage: 'repeating-linear-gradient(90deg, ' + T.sf + ' 0 14px, transparent 14px 34px), repeating-linear-gradient(180deg, ' + T.sf + ' 0 20px, transparent 20px 40px)', transition: 'background-color ' + (nf ? '2s' : '400ms') + ' ease' },
+      errText: (pa ? pa.name : 'La app') + ' no respondió. El resto del inicio sigue funcionando.'
+    };
+    const pLabels = { open: 'Abrir', info: 'Más info', retry: 'Reintentar' };
+    const pButtons = this.panelItems().map((id, i) => ({ label: pLabels[id], style: btn(base && z === 'panel' && s.pi === i) }));
+
+    // cards
+    const cards = APPS.map(a => {
+      const vi = vis.indexOf(a.id); const shown = vi >= 0;
+      const open = shown && vi === gi;
+      const f = open && z === 'grid' && !s.side && s.screen === 'home';
+      const mv = open && !!s.moving;
+      const ac = night ? mix(a.color, '#E8A33D', 0.5) : a.color;
+      const h = open ? SKY_H : HEIGHTS[(shown ? vi : 0) % HEIGHTS.length];
+      return {
+        id: a.id, name: a.name, open, collapsed: !open, quip: QUIPS[a.id], num: String(vi + 1).padStart(2, '0') + ' / ' + String(n).padStart(2, '0'),
+        p: open ? p : { }, pb: open ? pButtons : [],
+        style: { position: 'relative', flex: 'none', order: shown ? vi : 99, width: shown ? (open ? OPEN_W : SLAT_W) : 0, marginRight: shown ? SLAT_GAP : 0, height: h, opacity: shown ? 1 : 0, transform: mv ? 'translateY(-18px)' : 'none', zIndex: open ? 3 : 1, transition: rm ? 'opacity 220ms ease' : 'width 320ms ' + EASE + ', height 320ms ' + EASE + ', margin 320ms ' + EASE + ', transform 240ms ' + EASE + ', opacity 220ms ease' },
+        inner: { position: 'absolute', inset: 0, overflow: 'hidden', borderRadius: '4px 4px 0 0', display: 'flex', flexDirection: 'column', backgroundColor: open ? T.sf : mix(T.sf, ac, night ? 0.16 : 0.24), backgroundSize: open ? '12px 12px' : 'auto', backgroundImage: open ? 'radial-gradient(rgba(255,255,255,0.07) 1.4px, transparent 1.8px)' : 'repeating-linear-gradient(90deg, ' + T.sf + ' 0 10px, transparent 10px 22px), repeating-linear-gradient(180deg, ' + T.sf + ' 0 16px, transparent 16px 28px)', transition: 'background-color ' + (nf ? '2s' : '220ms') + ' ease' },
+        beacon: { height: open ? 6 : 8, flex: 'none', background: ac, transition: 'background-color 2s ease' },
+        glow: glow(f, 4, mv ? 'var(--ac2)' : 'var(--ac)')
+      };
+    });
+
+    // radial
+    let radialPos = {}, radialOpts = [], radialName = '', radialHint = '';
+    if (s.radial) {
+      const vi = vis.indexOf(s.radial.id); const col = vi % 6, row = Math.floor(vi / 6);
+      const cx = Math.max(192 + 340, Math.min(1824 - 340, 192 + vi * (SLAT_W + SLAT_GAP) + OPEN_W / 2));
+      const cy = 623;
+      radialPos = { position: 'absolute', left: cx, top: cy, width: 0, height: 0, zIndex: 25 };
+      radialName = appById(s.radial.id).name;
+      radialHint = s.radial.sel === 2 ? (s.ring ? 'Sigue…' : 'Mantén OK') : 'Elige con flechas';
+      const O = [{ l: 'Abrir', a: '↑', x: 0, y: -180 }, { l: 'Mover', a: '→', x: 270, y: 0 }, { l: 'Ocultar', a: '↓', x: 0, y: 180 }, { l: 'Información', a: '←', x: -290, y: 0 }];
+      radialOpts = O.map((o, i) => { const f = s.radial.sel === i; return { label: o.l, arrow: o.a, style: { position: 'absolute', left: o.x, top: o.y, transform: 'translate(-50%,-50%) scale(' + (f ? 1.08 : 1) + ')', height: 64, padding: '0 26px', borderRadius: 4, display: 'flex', alignItems: 'center', gap: 12, fontSize: 26, fontWeight: 500, whiteSpace: 'nowrap', boxSizing: 'border-box', border: '1px solid ' + (f ? (i === 2 ? 'var(--ac2)' : 'var(--ac)') : 'var(--lnS)'), background: f ? (i === 2 ? 'var(--ac2)' : 'var(--ac)') : 'var(--sf2)', color: f ? 'var(--onAc)' : 'var(--tx)', boxShadow: f ? '0 0 28px var(--glow)' : 'none', transition: tf + CT } }; });
+    }
+
+    // info
+    let info = null;
+    if (s.info) {
+      const a = appById(s.info.id); const vi = vis.indexOf(a.id);
+      info = {
+        name: a.name, swatch: sw(a.color, 56),
+        rows: [{ k: 'Lo último', v: a.now ? a.now.title + ' · ' + a.now.sub : 'Sin actividad reciente' }, { k: 'Lugar en el inicio', v: vi >= 0 ? (vi + 1) + ' de ' + n : 'Oculta' }, { k: 'Opciones', v: 'Mantén OK sobre la app para moverla u ocultarla' }],
+        btns: [{ label: 'Abrir', style: btn(s.info.btn === 0) }, { label: 'Cerrar', style: btn(s.info.btn === 1) }]
+      };
+    }
+
+    // inputs
+    const ist = this.inState();
+    const inputs = INPUTS.map((h, i) => {
+      const f = base && s.screen === 'inputs' && ist === 'ok' && s.ii === i;
+      return {
+        name: 'HDMI ' + h.n, code: 'IN-0' + h.n, dev: h.dev, status: h.sig ? 'Con señal' : 'Sin señal', pulse: h.sig ? '1' : '0', scan: 'h-' + i,
+        style: { position: 'relative', width: 522, height: 440, flex: 'none', transform: f ? 'scale(1.04)' : 'scale(1)', zIndex: f ? 2 : 1, transition: rm ? 'none' : 'transform 260ms ' + EASE },
+        inner: { position: 'absolute', inset: 0, borderRadius: 4, background: f ? 'var(--sf2)' : 'var(--sf)', border: '1px solid ' + (f ? 'var(--ac)' : 'var(--ln)'), padding: 36, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden', transition: CT },
+        glow: glow(f, 4),
+        dot: h.sig ? { position: 'absolute', inset: 0, borderRadius: '50%', background: 'var(--ac)' } : { position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid var(--mu)', boxSizing: 'border-box' },
+        ring: { position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid var(--ac)', boxSizing: 'border-box', opacity: 0 },
+        statusStyle: { fontSize: 26, fontWeight: 500, color: h.sig ? 'var(--tx)' : 'var(--mu)' }
+      };
+    });
+    const inMsg = ist === 'error' || ist === 'empty';
+    const inMsgF = base && s.screen === 'inputs' && inMsg;
+
+    // settings
+    const quick = QUICK.map((q, i) => {
+      const f = sf && srow.id === 'quick' && scol === i;
+      return {
+        name: q.name, sub: q.sub, scan: 'q-' + i,
+        style: { position: 'relative', width: 235, height: 148, flex: 'none', transform: f ? 'scale(1.06)' : 'scale(1)', zIndex: f ? 2 : 1, transition: rm ? 'none' : 'transform 240ms ' + EASE },
+        inner: { position: 'absolute', inset: 0, borderRadius: 4, background: f ? 'var(--sf2)' : 'var(--sf)', border: '1px solid ' + (f ? 'var(--ac)' : 'var(--ln)'), padding: '18px 20px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', overflow: 'hidden', transition: CT },
+        glow: glow(f, 4)
+      };
+    });
+    const chip = (f, sel, extra) => btn(f, Object.assign({ border: (sel && !f ? '2px solid var(--ac2)' : '1px solid ' + (f ? 'var(--ac)' : 'var(--lnS)')), padding: '0 16px' }, extra || {}));
+    const timerChips = TIMERS.map((m, i) => ({ label: m ? m + ' min' : 'Apagado', sel: s.timerMin === m, style: chip(sf && srow.id === 'timer' && scol === i, s.timerMin === m, { flex: 1 }) }));
+    const nightOpts = MODES.map((m, i) => ({ label: m.label, sub: m.sub, sel: s.nightMode === m.id && s.nightOv === null, style: chip(sf && srow.id === 'night' && scol === i, s.nightMode === m.id && s.nightOv === null, { flex: 1, height: 96, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', gap: 4, padding: '0 22px' }) }));
+    const timerOn = !!s.timerEnd; const remain = timerOn ? s.timerEnd - s.now : 0;
+    const fcs = this.fcState();
+    const fcf = sf && srow.id === 'fc';
+    const xs = i => 48 + i * 110, ys = t => 50 + (34 - t) / 14 * 190;
+    const fc = {
+      maxPts: FC.map((f, i) => xs(i) + ',' + ys(f.max)).join(' '), minPts: FC.map((f, i) => xs(i) + ',' + ys(f.min)).join(' '),
+      grid: [25, 30].map(t => ({ y: ys(t) })).concat([{ y: 280 }]),
+      pts: FC.map((f, i) => ({ x: xs(i), yMax: ys(f.max), yMin: ys(f.min), tyMax: ys(f.max) - 18, tyMin: ys(f.min) + 38, max: f.max + '°', min: f.min + '°', day: i === 0 ? 'Hoy' : DSH[(d.getDay() + i) % 7] }))
+    };
+    const hiddenRows = APPS.map(a => {
+      const hi = s.hidden.indexOf(a.id); const on = hi >= 0; if (on) this.lastHid[a.id] = hi;
+      const pos = on ? hi : (this.lastHid[a.id] ?? s.hidden.length);
+      const f = on && sf && srow.id === 'hidden' && scol === hi; const off = srow.id === 'hidden' ? Math.max(0, scol - 4) * 76 : 0;
+      return {
+        name: a.name, swatch: sw(a.color, 22),
+        style: { position: 'absolute', left: 0, right: 0, top: 0, height: 64, transform: 'translateY(' + (pos * 76 - off) + 'px)', opacity: on ? 1 : 0, display: 'flex', alignItems: 'center', gap: 16, padding: '0 10px 0 20px', borderRadius: 4, boxSizing: 'border-box', border: '1px solid ' + (f ? 'var(--ac)' : 'var(--ln)'), background: f ? 'var(--sf2)' : 'var(--sf)', pointerEvents: 'none', transition: (rm ? '' : 'transform 300ms ' + EASE + ', ') + 'opacity 220ms ease, ' + CT },
+        pill: btn(f, { height: 48, fontSize: 24, padding: '0 20px', marginLeft: 'auto' })
+      };
+    });
+
+    const sideItems = [['Inicio', 'Apps y lo que estás viendo'], ['Entradas', 'HDMI 1, 2 y 3'], ['Ajustes', 'Temporizador y modo noche']].map(([label, sub], i) => {
+      const f = s.side && s.sideIdx === i;
+      return { label, sub, style: { display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 4, height: 108, padding: '0 24px', borderRadius: 4, boxSizing: 'border-box', border: '1px solid ' + (f ? 'var(--ac)' : i === scrIdx ? 'var(--lnS)' : 'transparent'), background: f ? 'var(--sf)' : 'transparent', color: f ? 'var(--ac)' : 'var(--tx)', boxShadow: f ? '0 0 28px var(--glow)' : 'none', transform: f ? 'translateX(6px)' : 'none', transition: tf + CT } };
+    });
+    const sideStyle = { position: 'absolute', left: 96, top: 54, width: 460, height: 972, boxSizing: 'border-box', padding: 32, borderRadius: 4, background: 'var(--sf2)', border: '1px solid var(--lnS)', display: 'flex', flexDirection: 'column', gap: 12, zIndex: 20, transform: s.side || rm ? 'translateX(0)' : 'translateX(-560px)', opacity: s.side ? 1 : 0, pointerEvents: 'none', transition: (rm ? '' : 'transform 280ms ' + EASE + ', ') + 'opacity 220ms ease, ' + CT };
+
+    const toastStyle = { position: 'absolute', left: '50%', bottom: 72, transform: 'translateX(-50%) translateY(' + (s.toastOn || rm ? 0 : 16) + 'px)', opacity: s.toastOn ? 1 : 0, padding: '16px 28px', borderRadius: 4, background: 'var(--sf2)', border: '1px solid var(--lnS)', color: 'var(--tx)', fontSize: 26, whiteSpace: 'nowrap', zIndex: 40, pointerEvents: 'none', transition: (rm ? '' : 'transform 260ms ' + EASE + ', ') + 'opacity 220ms ease' };
+    const sp = SAVER_POS[s.saverPos];
+    const saverBox = { position: 'absolute', left: sp.l, top: sp.t, display: 'flex', flexDirection: 'column', opacity: s.saverVis ? (night ? 0.75 : 1) : 0, transition: 'opacity 900ms ease' };
+    const dateLong = DAYS[d.getDay()].replace(/^./, c => c.toUpperCase()) + ' ' + d.getDate() + ' de ' + MONTHS[d.getMonth()];
+    const homeOk = s.screen === 'home';
+
+    return {
+      rootRef: this.rootRef, focusMe: () => this.rootRef.current && this.rootRef.current.focus(),
+      stageStyle, tint1, tint2, rail,
+      title: { home: (d.getHours() < 7 ? 'La ciudad duerme' : d.getHours() < 12 ? 'Buen día, ciudad' : d.getHours() < 19 ? 'La tarde avanza' : 'La noche es tuya'), inputs: 'Entradas', settings: 'Ajustes', saver: '' }[s.screen],
+      showOffline: homeOk && s.demo === 'offline', wifiBtn: btn(base && z === 'top' && this.topItems()[0] === 'wifi', { height: 46, fontSize: 24, padding: '0 20px' }),
+      moveHint: homeOk && !!s.moving,
+      timerOn, timerLeft: mmss(remain),
+      nightLabel: night ? 'Noche' : 'Día', nightModeShort: s.nightOv !== null ? 'atajo' : { auto: 'auto', siempre: 'fijo', nunca: 'fijo' }[s.nightMode],
+      weatherChip, wLoading: wMode === 'loading', wReady: wMode !== 'loading', wBig: wTxt[0], wSmall: wTxt[1],
+      wSmallStyle: { fontSize: 24, whiteSpace: 'nowrap', flex: 'none', color: wMode === 'error' || wMode === 'offline' ? 'var(--err)' : 'var(--mu)' },
+      clockHM: tm.hm, clockAP: tm.ap,
+      isHome: homeOk, homeMain: homeOk && (n > 0 || s.demo === 'loading'), homeEmpty: homeOk && n === 0 && s.demo !== 'loading',
+      p, pButtons, appsLabel: n + (n === 1 ? ' edificio' : ' edificios') + ' · una app en cada uno',
+      gridLoading: s.demo === 'loading', gridReady: s.demo !== 'loading', skel16: Array.from({ length: 16 }, (_, i) => ({ flex: 'none', width: i === 0 ? OPEN_W : SLAT_W, height: i === 0 ? SKY_H : HEIGHTS[i], marginRight: SLAT_GAP, background: 'var(--sf)', borderRadius: '4px 4px 0 0' })), skel3: [0, 1, 2], skel5: [0, 1, 2, 3, 4],
+      cards, emptyBtn: btn(base && z === 'empty'),
+      radialOn: homeOk && !!s.radial, radialPos, radialOpts, radialName, radialHint,
+      infoOn: !!info, info: info || { rows: [], btns: [] },
+      isInputs: s.screen === 'inputs', inOk: ist === 'ok', inLoading: ist === 'loading', inMsg, inputs,
+      inMsgTag: { alignSelf: 'flex-start', fontFamily: "'Barlow',sans-serif", fontVariantNumeric: 'tabular-nums', fontSize: 24, color: ist === 'error' ? 'var(--err)' : 'var(--mu)', border: '1px solid ' + (ist === 'error' ? 'var(--err)' : 'var(--lnS)'), borderRadius: 4, padding: '2px 12px' },
+      inMsgLabel: ist === 'error' ? 'ERROR' : 'SIN SEÑAL',
+      inMsgTitle: ist === 'error' ? 'No se pudo leer el estado de las entradas' : 'Ninguna entrada tiene señal',
+      inMsgText: ist === 'error' ? 'La tele no respondió al consultar los puertos HDMI.' : 'Conecta o enciende un dispositivo en HDMI 1, 2 o 3.',
+      inMsgBtn: btn(inMsgF), inMsgBtnLabel: ist === 'error' ? 'Reintentar' : 'Volver al inicio',
+      isSettings: s.screen === 'settings', quick, timerChips, nightOpts,
+      timerSub: timerOn ? 'Se apaga a las ' + (t => t.hm + ' ' + t.ap)(fmt(new Date(s.timerEnd))) : 'Elige cuánto tiempo y la tele se apaga sola.',
+      timerBig: timerOn ? mmss(remain) : 'Apagado',
+      timerBigStyle: { fontFamily: "'Barlow',sans-serif", fontVariantNumeric: 'tabular-nums', fontSize: timerOn ? 64 : 40, fontWeight: 500, lineHeight: 1, color: timerOn ? 'var(--ac2)' : 'var(--mu)' },
+      timerFill: { height: '100%', width: (timerOn ? Math.max(0, remain / (s.timerMin * 60000)) * 100 : 0) + '%', background: 'var(--ac2)', transition: rm ? 'none' : 'width 900ms linear' },
+      nightHeader: 'MODO NOCHE · AHORA: ' + (night ? 'NOCHE' : 'DÍA'),
+      fcOk: fcs === 'ok', fcLoading: fcs === 'loading', fcErr: fcs === 'error' || fcs === 'offline', fc,
+      fcErrTag: fcs === 'offline' ? 'SIN CONEXIÓN' : 'ERROR', fcErrTitle: fcs === 'offline' ? 'No se pudo actualizar el pronóstico' : 'El servicio del clima no respondió',
+      fcRetry: btn(fcf),
+      hiddenCount: String(s.hidden.length), hasHidden: s.hidden.length > 0, noHidden: s.hidden.length === 0, hiddenRows,
+      hiddenEmptyBtn: btn(sf && srow.id === 'hidden' && !s.hidden.length),
+      sideStyle, sideItems, toastStyle, toastText: s.toastText,
+      isSaver: s.screen === 'saver', saverMoon: { position: 'relative', width: 210, height: 210, flex: 'none', borderRadius: '50%', overflow: 'hidden', background: night ? '#A8916C' : '#E8E3D3', boxShadow: night ? '0 0 70px rgba(232,163,61,0.16)' : '0 0 80px rgba(240,236,220,0.25)', transition: 'background-color 2s ease' }, saverLine: night ? 'La ciudad duerme. Tú también deberías.' : 'La ciudad sigue despierta. Tú decides.', saverBox, dateLong,
+      weatherLong: wMode === 'offline' ? 'Clima sin conexión' : '29 °C · Nublado · Progreso',
+      hasNarr: s.screen === 'inputs' || s.screen === 'settings',
+      narr: s.screen === 'inputs' ? 'Tres puertas a la ciudad. Elige por cuál entrar.' : s.screen === 'settings' ? 'El taller. Aquí se ajusta la noche.' : '',
+      bats: (this._bats || (this._bats = Array.from({ length: 8 }, (_, i) => ({ s: [1, 0.7, 0.85, 0.6, 1.1, 0.75, 0.9, 0.65][i], x: 1960 + i * 70, y: 150 + (i * 47) % 230 })))).map(b => ({ outer: { position: 'absolute', left: b.x, top: b.y, width: 64 * b.s, height: 26 * b.s }, inner: { position: 'absolute', inset: 0, background: night ? '#B89C78' : '#C4C7CC', clipPath: 'polygon(0% 30%, 12% 0%, 20% 35%, 32% 22%, 42% 48%, 47% 30%, 50% 42%, 53% 30%, 58% 48%, 68% 22%, 80% 35%, 88% 0%, 100% 30%, 86% 70%, 70% 58%, 60% 100%, 50% 78%, 40% 100%, 30% 58%, 14% 70%)', transition: 'background-color 2s ease' } })),
+      rainDrops: this._rain || (this._rain = Array.from({ length: 46 }, (_, i) => { const x = (i * 397) % 1880 + 20, h = 40 + (i * 13) % 50; return { position: 'absolute', left: x, top: -120 - (i * 71) % 300, width: 2, height: h, background: 'linear-gradient(to bottom, transparent, rgba(200,215,235,0.55))', opacity: 0, transform: 'rotate(10deg)' }; })),
+      showLegend: this.props.showLegend ?? true, demoLabel: STATE_LABEL[s.demo], motionLabel: rm ? 'reducido' : 'completo'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -51,5 +51,31 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
+        <!-- Protector de pantalla del sistema (la ciudad). Se elige por adb. -->
+        <service
+            android:name=".ui.cuarto.CityDream"
+            android:exported="true"
+            android:label="Mi TV · Ciudad"
+            android:permission="android.permission.BIND_DREAM_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.dreams.DreamService" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+
+        <!-- Temporizador para dormir: apaga la tele al terminar. Se activa una vez por adb. -->
+        <service
+            android:name=".data.SleepService"
+            android:exported="true"
+            android:label="Mi TV · Temporizador para dormir"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/sleep_service" />
+        </service>
     </application>
 </manifest>

@@ -76,6 +76,6 @@ class WeatherRepository {
             "?latitude=21.2822136&longitude=-89.6636637" +
             "&current=temperature_2m,weather_code,is_day,wind_speed_10m" +
             "&daily=weather_code,temperature_2m_max,temperature_2m_min" +
-            "&timezone=America%2FMerida&forecast_days=3"
+            "&timezone=America%2FMerida&forecast_days=5"
     }
 }
